@@ -1,0 +1,10 @@
+export const unitNameRegexp = /[A-Za-zА-Яа-я0-9-]+/;
+export const cityRegexp = /[A-Za-zА-Яа-я0-9-]+/;
+export const shipNameRegexp = /[А-Яа-я0-9-]+/;
+export const bortNumberRegexp = /[A-ZА-Яа-я0-9-]+/;
+export const projectRegexp = /[A-ZА-Яа-я0-9-]+/;
+export const callSignRegexp = /[A-Za-zА-Яа-я0-9-]+/;
+export const requiredFieldMessage = 'Обов\'язкове поле';
+export const errorFieldMessage = 'Не коректне значення';
+export const errorMinPeleng = 'Значення пеленгу не може бути меньше 0';
+export const errorMaxPeleng = 'Значення пеленгу не може бути більше 360';
