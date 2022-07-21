@@ -5,7 +5,11 @@ const api = axios.create({
   timeout: 12000,
 });
 
+export async function apiGetInit() {
+  const data = await api.get('/init');
+  return data;
+}
+
 export async function apiPostUnit(data) {
-  const resp = await api.post('/unit', data);
-  console.log(resp);
+  await api.post('/unit', data);
 }
