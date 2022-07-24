@@ -8,41 +8,10 @@ export function UnitsTable({
   data = units
 }) {
 
-  const groupByLevel = () => {
-    const grouppedByLevel = data.reduce((acc, curr) => {
-      const { level } = curr;
-      const alreadyExists = acc[level] || []
-      return { ...acc, [level]: [ ...alreadyExists, curr ] }
-    }, {});
-    const minExistedLevel = Math.min(...Object.keys(grouppedByLevel));
-    const result = {};
-    Object.entries(grouppedByLevel).forEach(([level, units]) => {
-      if (+level === +minExistedLevel) {
-        result[level] = units;
-        return;
-      }
-      console.log(units);
-
-    })
-  };
-
-  groupByLevel()
-
   const renderRow = () => {
     return data.map((row, index) => {
       return (
         <tr key={index}>
-          { 
-            unitsTableConfig.columns
-              .map(({ columnName }) => {
-                return (
-                  <>
-                    { columnName === 'order' && <td>{ index + 1 }</td> }
-                    { (columnName === 'unitName' || columnName === 'city') && <td>{ row[columnName] }</td> }
-                  </>
-                )
-              })
-          }
         </tr>
       )
     })

@@ -6,7 +6,7 @@ import { setUnitNames } from '../reducers/units';
 function* postUnit(action) {
   const { payload } = action;
   try {
-    const unitNames = yield call(apiPostUnit, payload);
+    const { unitNames } = yield call(apiPostUnit, payload);
     yield put(setUnitNames(unitNames));
   }
   catch(error) {

@@ -13,6 +13,10 @@ export const sidebarLinks = {
         type: 'navigation',
         label: 'Інтерактивна карта',
     },
+    shipInfo: {
+        type: 'navigation',
+        label: 'Додати інформацію про виявлений корабель',
+    },
     peleng: {
         iconPath: `${process.env.PUBLIC_URL}/images/icons/angle.png`,
         type: 'flowSidebarOpener',

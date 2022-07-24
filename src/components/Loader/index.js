@@ -25,17 +25,16 @@ export function LoaderPortal() {
     const showLoader = useSelector(isLoading);
 
     useEffect(() => {
-        const classList = app.classList;
-        if (showLoader && !classList.contains(className)) {
-            classList.add(className);
+        if (showLoader) {
+            app.classList.add(className)
         }
-        if (!showLoader && classList.contains(className)) {
-            classList.remove(className);
+        return () => {
+            app.classList.remove(className)
         }
     }, [showLoader]);
 
     return ReactDOM.createPortal(
-        <Loader show={showLoader}/>,
+        showLoader ? <Loader show={showLoader}/> : null,
         loaderRoot
     );
 }

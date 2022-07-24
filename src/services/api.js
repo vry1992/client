@@ -10,6 +10,10 @@ const normalizeInitResponse = (data) => {
   return { unitNames };
 }
 
+const normalizeSearchShipKeyword = (data) => {
+  return data.map(({ ship_id: shipId, ship_name: shipName }) => ({ shipId, shipName }));
+}
+
 export async function apiGetInit() {
   const { data } = await api.get('/init');
   return normalizeInitResponse(data);
@@ -22,4 +26,9 @@ export async function apiPostUnit(body) {
 
 export async function apiPostShip(body) {
   await api.post('/ship', body);
+}
+
+export async function apiPostSearchShipKeyword(body) {
+  const { data } = await api.post('/ship/search', body);
+  return normalizeSearchShipKeyword(data);
 }

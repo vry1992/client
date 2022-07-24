@@ -76,6 +76,13 @@ const getPelengSchema = (required) => {
   return required ? schema.required(requiredFieldMessage) : schema.notRequired()
 }
 
+const getSearchSchema = (required) => {
+  const schema = yup
+    .string()
+
+  return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+}
+
 export {
   getUnitNameSchema,
   getCitySchema,
@@ -84,5 +91,6 @@ export {
   getBortNumberSchema,
   getProjectSchema,
   getShipTypeSchema,
-  getPelengSchema
+  getPelengSchema,
+  getSearchSchema
 }

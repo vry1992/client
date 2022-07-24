@@ -22,13 +22,16 @@ export function AddNewShip() {
         if (Object.keys(units).length === 0) {
             setIsRefuseModalOpen(true);
         }
+        else {
+            setIsRefuseModalOpen(false);
+        }
     }, [units]);
 
     return (
         <div className='add-new-ship'>
             <Headline text='Додати новий корабель'/>
             <NewShipForm />
-            <RefuseAddNewShipModal show={iseRefuseModalOpen} onClick={navigateToAddUnitPage}/>
+            {iseRefuseModalOpen && <RefuseAddNewShipModal show={iseRefuseModalOpen} onClick={navigateToAddUnitPage}/>}
         </div>
     )
 }

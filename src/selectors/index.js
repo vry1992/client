@@ -6,5 +6,6 @@ export const getPelengsToDraw = ({ pelengReducer }) => pelengReducer.pelengsToDr
 export const isLoading = (({ loaderReducer }) => Object.keys(loaderReducer.actions).length);
 
 export const getUnitNames = (({ unitsReducer }) => unitsReducer.unitNames);
+export const getSearchShipsList = (({ shipsReducer }) => shipsReducer.searchShipsList);
 
 export const getFlowSidebarContentType = ({ flowSidebarReducer }) => flowSidebarReducer.contentType;

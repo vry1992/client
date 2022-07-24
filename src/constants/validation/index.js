@@ -8,3 +8,4 @@ export const requiredFieldMessage = 'Обов\'язкове поле';
 export const errorFieldMessage = 'Не коректне значення';
 export const errorMinPeleng = 'Значення пеленгу не може бути меньше 0';
 export const errorMaxPeleng = 'Значення пеленгу не може бути більше 360';
+export const errorSearchShip = 'По введеній назві не знайдено жодного корабля. Можливо не вірна назва, або корабель відсутній в базі даних';

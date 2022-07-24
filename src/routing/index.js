@@ -8,6 +8,7 @@ import {
 import { Layout } from "../components/Layout";
 import { AddNewUnit } from "../pages/AddNewUnit";
 import { Map } from "../pages/Map";
+import { ShipInfo } from "../pages/ShipInfo";
 
 export const routesConfig = {
     addNewShip: {
@@ -21,6 +22,10 @@ export const routesConfig = {
     map: {
         path: '/map',
         page: Map
+    },
+    shipInfo: {
+        path: '/ship-info',
+        page: ShipInfo
     }
 };
 

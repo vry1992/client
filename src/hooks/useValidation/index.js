@@ -7,7 +7,8 @@ import {
   getBortNumberSchema,
   getProjectSchema,
   getShipTypeSchema,
-  getPelengSchema
+  getPelengSchema,
+  getSearchSchema
 } from './schemas';
 
 export function useValidation(fieldsToValdate = {}) {
@@ -20,6 +21,7 @@ export function useValidation(fieldsToValdate = {}) {
     ...( fieldsToValdate.project && { project: getProjectSchema(fieldsToValdate.project.required) } ),
     ...( fieldsToValdate.shipType && { shipType: getShipTypeSchema(fieldsToValdate.shipType.required) } ),
     ...( fieldsToValdate.peleng && { peleng: getPelengSchema(fieldsToValdate.peleng.required) } ),
+    ...( fieldsToValdate.search && { search: getSearchSchema(fieldsToValdate.search.required) } ),
   });
 
   return { validationSchema }
