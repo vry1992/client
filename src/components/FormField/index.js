@@ -76,11 +76,26 @@ export function FormField(fieldProps) {
     </Form.FloatingLabel>
   );
 
+  const renderCheckboxField = () => {
+    return (
+      <Form.Group className='mb-3'>
+        <Form.Check 
+        onChange={onChange} 
+        name={fieldName}
+        id={fieldName}
+        onBlur={onBlur}
+        label={label}
+         />
+      </Form.Group>
+    )
+  }
+
   return (
       <React.Fragment key={fieldName}>
           { (type === 'text' || type === 'number') && renderTextField() }
           { type === 'color' && renderColorField() }
           { type === 'select' && renderSelectField() }
+          { type === 'checkbox' && renderCheckboxField() }
       </React.Fragment>
   )
 }

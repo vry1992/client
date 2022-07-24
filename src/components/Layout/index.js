@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Container, Col } from 'react-bootstrap';
 import { FlowSidebar } from '../FlowSidebar';
+import { LoaderPortal } from '../Loader';
 import { Sidebar } from '../Sidebar';
 
 export function Layout({
@@ -8,6 +9,7 @@ export function Layout({
 }) {
     return (
         <section className=''>
+            <LoaderPortal />
             <Container fluid>
                 <Row>
                     <Col xl={2}>

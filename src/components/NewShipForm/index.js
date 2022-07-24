@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { Row, Col } from 'react-bootstrap';
 import { newShipFormConfig } from '../../constants/newShipForm';
@@ -8,6 +8,8 @@ import { CustomButton } from '../CustomButton';
 import { useValidation } from '../../hooks/useValidation';
 import { useForm } from '../../hooks/useForm';
 import { MandatoryFieldsNotification } from '../MandatoryFieldsNotification';
+import { getUnitNames } from '../../selectors';
+import { postShip } from '../../actions/ships';
 
 const initialValues = Object.fromEntries(Object.keys(newShipFormConfig).map((item) => [item, '']));
 
@@ -15,6 +17,7 @@ export function NewShipForm() {
 
     const dispatch = useDispatch();
 
+    const units = useSelector(getUnitNames);
     const { validationSchema } = useValidation(newShipFormConfig);
     const { checkIsFormValid, isFormValid } = useForm(newShipFormConfig);
 
@@ -25,7 +28,7 @@ export function NewShipForm() {
     });
 
     function onSubmit() {
-        console.log(values);
+        dispatch(postShip(values));
     }
 
     useEffect(() => {
@@ -35,17 +38,21 @@ export function NewShipForm() {
     const renderForm = () => {
         return (
             Object.entries(newShipFormConfig)
-                .map(([ name, fieldProps ]) => (
-                    <FormField 
-                        key={name}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values[name]}
-                        error={errors[name]} 
-                        touched={touched[name]}
-                        {...fieldProps} 
-                    />
-                ))
+                .map(([ name, { options, ...restProps } ]) => {
+                    const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
+                    return (
+                        <FormField 
+                            key={name}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values[name]}
+                            error={errors[name]} 
+                            touched={touched[name]}
+                            options={opts}
+                            {...restProps} 
+                        />
+                    );
+                })
         );
     }
 

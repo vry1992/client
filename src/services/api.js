@@ -5,11 +5,21 @@ const api = axios.create({
   timeout: 12000,
 });
 
-export async function apiGetInit() {
-  const data = await api.get('/init');
-  return data;
+const normalizeInitResponse = (data) => {
+  const unitNames = Object.fromEntries(data.map(({ unit_id: unitId, unit_name: unitName }) => ([ unitId, unitName ])));
+  return { unitNames };
 }
 
-export async function apiPostUnit(data) {
-  await api.post('/unit', data);
+export async function apiGetInit() {
+  const { data } = await api.get('/init');
+  return normalizeInitResponse(data);
+}
+
+export async function apiPostUnit(body) {
+  const { data } = await api.post('/unit', body);
+  return normalizeInitResponse(data);
+}
+
+export async function apiPostShip(body) {
+  await api.post('/ship', body);
 }

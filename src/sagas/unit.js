@@ -1,18 +1,18 @@
-import { call, takeEvery } from 'redux-saga/effects'
+import { call, takeEvery, put } from 'redux-saga/effects'
 import { POST_UNIT } from '../actions/newUnit';
 import { apiPostUnit } from '../services/api';
+import { setUnitNames } from '../reducers/units';
 
 function* postUnit(action) {
   const { payload } = action;
   try {
-    const result = yield call(apiPostUnit, payload);
-    console.log(result, saga);
+    const unitNames = yield call(apiPostUnit, payload);
+    yield put(setUnitNames(unitNames));
   }
   catch(error) {
 
   }
   finally {
-
   }
 }
 

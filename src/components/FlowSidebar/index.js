@@ -13,7 +13,6 @@ import { PelengsList } from '../PelengsList';
 
 export function FlowSidebar(
   {
-    children,
     title = 'Пеленг'
   }
 ) {

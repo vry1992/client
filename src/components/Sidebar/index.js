@@ -1,44 +1,46 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { useDispatch } from 'react-redux/es/hooks/useDispatch';
 import { sidebarLinks } from '../../constants/sidebar';
 import { routesConfig } from '../../routing';
-import { CustomButton } from '../CustomButton';
 import { setContentType } from '../../reducers/flowSidebar';
 import { contentTypes } from '../../constants/flowSidebar';
+import { getUnitNames } from '../../selectors';
+import './index.scss';
 
 export function Sidebar() {
 
+    const units = useSelector(getUnitNames);
     const dispatch = useDispatch();
+    const location = useLocation();
 
-    const listSwitch = (link, { type, label, iconPath, clickHandler }) => {
-        switch(type) {
-            case 'navigation':
-                return (
-                    <li key={link}>
-                        <Link to={routesConfig[link].path}>{ label }</Link>
-                    </li>
+    const renderListItems = (link, { type, label, iconPath, clickHandler }) => {
+        const isDisabled = routesConfig[link]?.path === routesConfig.addNewShip.path && !Object.keys(units).length;
+        return (
+            <ListGroup.Item as='li' key={link} onClick={clickHandler} active={location.pathname === routesConfig[link]?.path} disabled={isDisabled}>
+                {type === 'navigation' && <Link to={routesConfig[link].path}>{ label }</Link>}
+                {
+                type === 'flowSidebarOpener' && (
+                    <div onClick={() => {
+                        dispatch(clickHandler());
+                        dispatch(setContentType(contentTypes.peleng));
+                    }}>
+                        <img src={iconPath} alt={label} />
+                        <span>{label}</span>
+                    </div>
                 )
-            case 'flowSidebarOpener': 
-                return (
-                    <li key={link}>
-                       <CustomButton iconPath={iconPath} text={label} onClick={() => {
-                            dispatch(clickHandler());
-                            dispatch(setContentType(contentTypes.peleng));
-                        }
-                       }/>
-                    </li>
-                )
-            default: 
-                return null
-        }
+                }
+            </ListGroup.Item>
+        );
     }
 
     return (
         <div className='sidebar'>
-            <ul>
-                { Object.entries(sidebarLinks).map((link) => listSwitch(...link)) }
-            </ul>
+            <ListGroup as='ul'>
+                { Object.entries(sidebarLinks).map((link) => renderListItems(...link)) }
+            </ListGroup>
         </div>
     )
 }

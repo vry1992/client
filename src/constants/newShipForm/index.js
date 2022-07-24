@@ -35,6 +35,14 @@ export const newShipFormConfig = {
             srzk: 'Середній розвідувальний корабель'
         }
     },
+    shipUnit: {
+        type: 'select',
+        placeholder: 'Підрозділ',
+        label: 'Підрозділ',
+        fieldName: 'shipUnit',
+        required: true,
+        options: {}
+    },
     city: {
         type: 'text',
         placeholder: 'Місто базування',
@@ -42,11 +50,4 @@ export const newShipFormConfig = {
         fieldName: 'city',
         required: true
     },
-    callSign: {
-        type: 'text',
-        placeholder: 'Позивний',
-        label: 'Позивний',
-        fieldName: 'callSign',
-        required: false
-    }
 }

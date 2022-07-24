@@ -13,11 +13,4 @@ export const newUnitFormConfig = {
         fieldName: 'city',
         required: true
     },
-    callSign: {
-        type: 'text',
-        placeholder: 'Позивний',
-        label: 'Позивний',
-        fieldName: 'callSign',
-        required: false
-    }
 }
