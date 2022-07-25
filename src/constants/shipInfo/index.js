@@ -73,4 +73,18 @@ export const shipInfoFields = {
         min: 0,
         max: 360
     },
+    personName: {
+        type: 'text',
+        placeholder: 'Прізвище та ініціали того хто добавив запис',
+        label: 'Прізвище та ініціали того хто добавив запис',
+        fieldName: 'personName',
+        required: true,
+    },
+    additionalInformatiom: {
+        type: 'textarea',
+        placeholder: 'Будь-яка додаткова інформація',
+        label: 'Будь-яка додаткова інформація',
+        fieldName: 'additionalInformatiom',
+        required: false,
+    },
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { FloatingLabel } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import './index.scss';
 
@@ -110,6 +111,22 @@ export function FormField(fieldProps) {
         { date?.value && <span className='emit-date-time-value'>{ date.value }</span> }
       </div>
     );
+  };
+
+  const renderTextAreaField = () => {
+    return (
+      <FloatingLabel label={label}>
+        <Form.Control
+          as={type}
+          placeholder={placeholder}
+          onChange={onChange} 
+          name={fieldName}
+          id={fieldName}
+          onBlur={onBlur}
+          style={{ height: '100px' }}
+        />
+      </FloatingLabel>
+    );
   }
 
   return (
@@ -120,6 +137,7 @@ export function FormField(fieldProps) {
           { type === 'checkbox' && renderCheckboxField() }
           { type === 'time' && renderTimeField() }
           { type === 'date' && renderDateField() }
+          { type === 'textarea' && renderTextAreaField() }
       </React.Fragment>
   )
 }

@@ -8,15 +8,15 @@ import { useValidation } from '../../hooks/useValidation';
 import { useForm } from '../../hooks/useForm';
 import { getUnitNames } from '../../selectors';
 import { searchShipFormConfig, shipInfoFields } from '../../constants/shipInfo';
-import { postSearchShipKeyWord } from '../../actions/ships';
+import { postSearchShipKeyWord, postShipData } from '../../actions/ships';
 import { errorSearchShip } from '../../constants/validation';
 import { coordinatesConverter } from '../../helpers';
+import { CustomButton } from '../CustomButton';
 
 const initialValues = Object.fromEntries(Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => [item, '']));
 
 export function SearchShipByKeyWords({
     selectedShipData,
-    setSelectedShipData
 }) {
     const dispatch = useDispatch();
     const units = useSelector(getUnitNames);
@@ -38,7 +38,33 @@ export function SearchShipByKeyWords({
         onSubmit: onSubmit
     });
 
-    function onSubmit(payload) {
+    function onSuccessSubmit() {
+        console.log('success submit ship data');
+    };
+
+    function onFailSubmit() {
+        console.log('fail submit ship data');
+    };
+
+    function onSubmit() {
+        const { date, time, latitude, longitude, peleng, additionalInformation, personName } = values;
+        const dataToSubmit = {
+            shipId: selectedShipData.shipId,
+            discoverTimestamp: date + time,
+            personName,
+            ...(latitude && { latitude }),
+            ...(longitude && { longitude }),
+            ...(peleng && { peleng }),
+            ...(additionalInformation && { additionalInformation }),
+        }
+        dispatch(postShipData({
+            data: dataToSubmit,
+            onSuccess: onSuccessSubmit,
+            onSuccess: onFailSubmit,
+        }))
+    };
+
+    function onSubmitSearch(payload) {
         dispatch(postSearchShipKeyWord(payload));
     };
 
@@ -50,7 +76,7 @@ export function SearchShipByKeyWords({
         handleChange(event);
         const { target: { value } } = event;
         if (!selectedShipData && value.length && value.length % 3 === 0) {
-            onSubmit({ data: { search: value }, onError: onFailSearch });
+            onSubmitSearch({ data: { search: value }, onError: onFailSearch });
         }
     };
 
@@ -72,7 +98,6 @@ export function SearchShipByKeyWords({
     }
 
     useEffect(() => {
-        console.log(values);
         checkIsFormValid(errors, values);
     }, [values, errors]);
 
@@ -164,8 +189,9 @@ export function SearchShipByKeyWords({
                 {
                     selectedShipData && (
                         <Row className='justify-content-md-center'>
-                            <Col xs={6} sm={12}>
+                            <Col xs={6} sm={8}>
                                 { renderShipInfoForm() }
+                                <CustomButton text='Зберегти' type='submit' disabled={!isFormValid}/>
                             </Col>
                         </Row>
                     )

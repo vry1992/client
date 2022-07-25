@@ -1,7 +1,7 @@
 import { call, takeEvery, takeLatest, put } from 'redux-saga/effects'
-import { POST_SEARCH_SHIP_KEYWORD, POST_SHIP } from '../actions/ships';
+import { POST_SEARCH_SHIP_KEYWORD, POST_SHIP, POST_SHIP_DATA } from '../actions/ships';
 import { setSearchShipsList } from '../reducers/ships';
-import { apiPostSearchShipKeyword, apiPostShip } from '../services/api';
+import { apiPostSearchShipKeyword, apiPostShip, apiPostShipData } from '../services/api';
 
 function* postShip(action) {
   const { payload } = action;
@@ -36,8 +36,23 @@ function* searchShipByKeyWord(action) {
   }
 }
 
+function* saveShipData(action) {
+  const { payload } = action;
+  try {
+    const result = yield call(apiPostShipData, payload.data);
+  }
+  catch(error) {
+
+  }
+  finally {
+
+  }
+}
+
+
 function* shipsWatcher() {
   yield takeEvery(POST_SHIP, postShip);
+  yield takeEvery(POST_SHIP_DATA, saveShipData);
   yield takeLatest(POST_SEARCH_SHIP_KEYWORD, searchShipByKeyWord);
 }
 
