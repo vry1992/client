@@ -10,21 +10,26 @@ import { getUnitNames } from '../../selectors';
 import { searchShipFormConfig, shipInfoFields } from '../../constants/shipInfo';
 import { postSearchShipKeyWord } from '../../actions/ships';
 import { errorSearchShip } from '../../constants/validation';
+import { coordinatesConverter } from '../../helpers';
 
-const initialValues = Object.fromEntries(Object.keys(searchShipFormConfig).map((item) => [item, '']));
+const initialValues = Object.fromEntries(Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => [item, '']));
 
 export function SearchShipByKeyWords({
     selectedShipData,
     setSelectedShipData
 }) {
-
     const dispatch = useDispatch();
-
     const units = useSelector(getUnitNames);
     const { validationSchema } = useValidation(searchShipFormConfig);
     const { checkIsFormValid, isFormValid } = useForm(searchShipFormConfig);
     const [date, setDate] = useState(null);
     const [time, setTime] = useState(null);
+    const [coordinates, setCoordinates] = useState({
+        latitudeDegs: 0,
+        latitudeMinutes: 0,
+        longitudeDegs: 0,
+        longitudeMinutes: 0,
+    });
 
     const { values, handleChange, handleSubmit, errors, touched, setFieldError, setFieldValue } = useFormik({
         initialValues,
@@ -43,40 +48,54 @@ export function SearchShipByKeyWords({
 
     function onChange(event) {
         handleChange(event);
-        setSelectedShipData(null);
         const { target: { value } } = event;
-        if (value.length && value.length % 3 === 0) {
+        if (!selectedShipData && value.length && value.length % 3 === 0) {
             onSubmit({ data: { search: value }, onError: onFailSearch });
         }
     };
 
     function onChangeTime({ target: { value, valueAsNumber } }) {
         setTime({ value, timeMS: valueAsNumber });
+        setFieldValue('time', valueAsNumber);
     };
 
     function onChangeDate({ target: { valueAsDate, valueAsNumber } }) {
         setDate({
             value: valueAsDate.toLocaleDateString(),
             dateMS: valueAsNumber
-        })
+        });
+        setFieldValue('date', valueAsNumber);
     };
 
+    function onChangeCoordinates({ target: { name, value } }) {
+        setCoordinates({ ...coordinates, [name]: +value })
+    }
+
     useEffect(() => {
+        console.log(values);
         checkIsFormValid(errors, values);
     }, [values, errors]);
+
+    useEffect(() => {
+        const { 
+            latitudeDegs,
+            latitudeMinutes,
+            longitudeDegs,
+            longitudeMinutes
+        } = coordinates;
+        setFieldValue('longitude', coordinatesConverter(longitudeDegs, longitudeMinutes));
+        setFieldValue('latitude', coordinatesConverter(latitudeDegs, latitudeMinutes));
+    }, [coordinates, setFieldValue]);
 
     useEffect(() => {
         selectedShipData && setFieldValue('search', selectedShipData.shipName);
     }, [selectedShipData]);
 
-    const renderField = ({ name, options, onChangeDate, onChangeTime, date, time, ...restProps }) => {
-        const changeHandler = name === shipInfoFields.time.fieldName 
-            ? onChangeTime : name === shipInfoFields.date.fieldName
-            ? onChangeDate : onChange;
+    const renderField = ({ name, options, date, time, onChange, ...restProps }) => {
         return (
             <FormField 
                 key={name}
-                onChange={changeHandler}
+                onChange={onChange}
                 value={values[name]}
                 error={errors[name]} 
                 touched={touched[name]}
@@ -93,10 +112,24 @@ export function SearchShipByKeyWords({
             Object.entries(searchShipFormConfig)
                 .map(([ name, { options, ...restProps } ]) => {
                     const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
-                    return renderField({ name, options: opts, restProps })
+                    return renderField({ name, options: opts, onChange, ...restProps })
                 })
         );
     };
+
+    const renderLatLngFields = (name) => {
+        return (
+            <Row key={name}>
+                { Object.entries(shipInfoFields[name]).map(([fieldName, fieldProps]) => {
+                    return (
+                        <Col key={fieldName}>
+                            { renderField({ name: fieldName, onChange: onChangeCoordinates, ...fieldProps }) }
+                        </Col>
+                    )
+                })}
+            </Row>
+        )
+    }
 
     const renderShipInfoForm = () => {
         return (
@@ -104,19 +137,18 @@ export function SearchShipByKeyWords({
                 .map(([ name, { options, ...restProps } ]) => {
                     const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
                     if (name === 'latitude' || name === 'longitude') {
-                        return (
-                            <Row key={name}>
-                                { Object.entries(shipInfoFields[name]).map(([fieldName, fieldProps]) => {
-                                    return (
-                                        <Col key={fieldName}>
-                                            { renderField({ name: fieldName, ...fieldProps }) }
-                                        </Col>
-                                    )
-                                })}
-                            </Row>
-                        )
+                        return renderLatLngFields(name);
                     }
-                    return renderField({ name, options: opts, restProps, onChangeDate, onChangeTime, date, time })
+                    return renderField({ 
+                        name, 
+                        options: opts,
+                        onChange,
+                        date,
+                        time,
+                        ...( name === 'time' && { onChange: onChangeTime }),
+                        ...( name === 'date' && { onChange: onChangeDate }),
+                        ...restProps 
+                    })
                 })
         );
     };
@@ -125,14 +157,14 @@ export function SearchShipByKeyWords({
         <div>
             <form onSubmit={handleSubmit}>
                 <Row className='justify-content-md-center'>
-                    <Col xs={6}>
+                    <Col xs={6} sm={12}>
                         { renderSearchShipForm() }
                     </Col>
                 </Row>
                 {
                     selectedShipData && (
                         <Row className='justify-content-md-center'>
-                            <Col xs={6}>
+                            <Col xs={6} sm={12}>
                                 { renderShipInfoForm() }
                             </Col>
                         </Row>

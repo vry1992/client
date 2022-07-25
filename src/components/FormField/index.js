@@ -95,7 +95,7 @@ export function FormField(fieldProps) {
   const renderTimeField = () => {
     return (
       <div className='date-time-wrapper'>
-        <input id={fieldName} type={type} placeholder={placeholder} value='13:30' onChange={onChange}/>
+        <input id={fieldName} type={type} placeholder={placeholder} value={time?.value || ''} onChange={onChange}/>
         <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
         { time?.value && <span className='emit-date-time-value'>{ time.value }</span> }
       </div>
@@ -105,7 +105,7 @@ export function FormField(fieldProps) {
   const renderDateField = () => {
     return (
       <div className='date-time-wrapper'>
-        <input id={fieldName} type={type} placeholder={placeholder} onChange={onChange}/>
+        <input id={fieldName} type={type} placeholder={placeholder} onChange={onChange} value={date?.value || ''}/>
         <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
         { date?.value && <span className='emit-date-time-value'>{ date.value }</span> }
       </div>
