@@ -10,8 +10,8 @@ const ModalLayout = ({
     content
 }) => {
     return (
-        <div className="modal-wrapper">
-            <div className="modal-content">
+        <div className='modal-wrapper'>
+            <div className='modal-content'>
                 { content }
             </div>
         </div>

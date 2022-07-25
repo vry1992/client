@@ -11,7 +11,7 @@ export function RefuseAddNewShipModal(
 ) {
     return (
         <Modal show={show}>
-            <Paragraph text="Спочатку потрібно додати хоча б один підрозділ" />
+            <Paragraph text='Спочатку потрібно додати хоча б один підрозділ' />
             <CustomButton onClick={onClick} text='Додати підрозділи' />
         </Modal>
     )

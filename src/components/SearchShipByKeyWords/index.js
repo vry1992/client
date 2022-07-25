@@ -35,11 +35,11 @@ export function SearchShipByKeyWords({
 
     function onSubmit(payload) {
         dispatch(postSearchShipKeyWord(payload));
-    }
+    };
 
     function onFailSearch() {
         setFieldError('search', errorSearchShip);
-    }
+    };
 
     function onChange(event) {
         handleChange(event);
@@ -48,23 +48,18 @@ export function SearchShipByKeyWords({
         if (value.length && value.length % 3 === 0) {
             onSubmit({ data: { search: value }, onError: onFailSearch });
         }
-    }
+    };
 
     function onChangeTime({ target: { value, valueAsNumber } }) {
         setTime({ value, timeMS: valueAsNumber });
-    }
+    };
 
     function onChangeDate({ target: { valueAsDate, valueAsNumber } }) {
         setDate({
             value: valueAsDate.toLocaleDateString(),
             dateMS: valueAsNumber
         })
-    }
-
-    useEffect(() => {
-        console.log(time);
-        console.log(date);
-    })
+    };
 
     useEffect(() => {
         checkIsFormValid(errors, values);
@@ -72,9 +67,9 @@ export function SearchShipByKeyWords({
 
     useEffect(() => {
         selectedShipData && setFieldValue('search', selectedShipData.shipName);
-    }, [selectedShipData])
+    }, [selectedShipData]);
 
-    const renderField = ({ name, options, restProps, onChangeDate, onChangeTime, date, time }) => {
+    const renderField = ({ name, options, onChangeDate, onChangeTime, date, time, ...restProps }) => {
         const changeHandler = name === shipInfoFields.time.fieldName 
             ? onChangeTime : name === shipInfoFields.date.fieldName
             ? onChangeDate : onChange;
@@ -101,17 +96,30 @@ export function SearchShipByKeyWords({
                     return renderField({ name, options: opts, restProps })
                 })
         );
-    }
+    };
 
     const renderShipInfoForm = () => {
         return (
             Object.entries(shipInfoFields)
                 .map(([ name, { options, ...restProps } ]) => {
                     const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
+                    if (name === 'latitude' || name === 'longitude') {
+                        return (
+                            <Row key={name}>
+                                { Object.entries(shipInfoFields[name]).map(([fieldName, fieldProps]) => {
+                                    return (
+                                        <Col key={fieldName}>
+                                            { renderField({ name: fieldName, ...fieldProps }) }
+                                        </Col>
+                                    )
+                                })}
+                            </Row>
+                        )
+                    }
                     return renderField({ name, options: opts, restProps, onChangeDate, onChangeTime, date, time })
                 })
         );
-    }
+    };
 
     return (
         <div>
