@@ -14,6 +14,8 @@ export function FormField(fieldProps) {
     touched,
     options,
     required,
+    date,
+    time,
     ...restProps
   } = fieldProps;
 
@@ -88,6 +90,26 @@ export function FormField(fieldProps) {
          />
       </Form.Group>
     )
+  };
+
+  const renderTimeField = () => {
+    return (
+      <div className='date-time-wrapper'>
+        <input id={fieldName} type={type} placeholder={placeholder} value="13:30" onChange={onChange}/>
+        <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
+        { time?.value && <span className='emit-date-time-value'>{ time.value }</span> }
+      </div>
+    );
+  };
+
+  const renderDateField = () => {
+    return (
+      <div className='date-time-wrapper'>
+        <input id={fieldName} type={type} placeholder={placeholder} onChange={onChange}/>
+        <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
+        { date?.value && <span className='emit-date-time-value'>{ date.value }</span> }
+      </div>
+    );
   }
 
   return (
@@ -96,6 +118,8 @@ export function FormField(fieldProps) {
           { type === 'color' && renderColorField() }
           { type === 'select' && renderSelectField() }
           { type === 'checkbox' && renderCheckboxField() }
+          { type === 'time' && renderTimeField() }
+          { type === 'date' && renderDateField() }
       </React.Fragment>
   )
 }

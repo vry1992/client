@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { Row, Col } from 'react-bootstrap';
@@ -7,21 +7,26 @@ import { FormField } from '../FormField';
 import { useValidation } from '../../hooks/useValidation';
 import { useForm } from '../../hooks/useForm';
 import { getUnitNames } from '../../selectors';
-import { searchShipFormConfig } from '../../constants/shipInfo';
+import { searchShipFormConfig, shipInfoFields } from '../../constants/shipInfo';
 import { postSearchShipKeyWord } from '../../actions/ships';
 import { errorSearchShip } from '../../constants/validation';
 
 const initialValues = Object.fromEntries(Object.keys(searchShipFormConfig).map((item) => [item, '']));
 
-export function SearchShipByKeyWords() {
+export function SearchShipByKeyWords({
+    selectedShipData,
+    setSelectedShipData
+}) {
 
     const dispatch = useDispatch();
 
     const units = useSelector(getUnitNames);
     const { validationSchema } = useValidation(searchShipFormConfig);
     const { checkIsFormValid, isFormValid } = useForm(searchShipFormConfig);
+    const [date, setDate] = useState(null);
+    const [time, setTime] = useState(null);
 
-    const { values, handleChange, handleSubmit, errors, touched, setFieldError } = useFormik({
+    const { values, handleChange, handleSubmit, errors, touched, setFieldError, setFieldValue } = useFormik({
         initialValues,
         validationSchema,
         initialTouched: { search: true },
@@ -38,25 +43,51 @@ export function SearchShipByKeyWords() {
 
     function onChange(event) {
         handleChange(event);
+        setSelectedShipData(null);
         const { target: { value } } = event;
         if (value.length && value.length % 3 === 0) {
             onSubmit({ data: { search: value }, onError: onFailSearch });
         }
     }
 
+    function onChangeTime({ target: { value, valueAsNumber } }) {
+        setTime({ value, timeMS: valueAsNumber });
+    }
+
+    function onChangeDate({ target: { valueAsDate, valueAsNumber } }) {
+        setDate({
+            value: valueAsDate.toLocaleDateString(),
+            dateMS: valueAsNumber
+        })
+    }
+
+    useEffect(() => {
+        console.log(time);
+        console.log(date);
+    })
+
     useEffect(() => {
         checkIsFormValid(errors, values);
-    }, [values, errors])
+    }, [values, errors]);
 
-    const renderField = ({ name, options, restProps }) => {
+    useEffect(() => {
+        selectedShipData && setFieldValue('search', selectedShipData.shipName);
+    }, [selectedShipData])
+
+    const renderField = ({ name, options, restProps, onChangeDate, onChangeTime, date, time }) => {
+        const changeHandler = name === shipInfoFields.time.fieldName 
+            ? onChangeTime : name === shipInfoFields.date.fieldName
+            ? onChangeDate : onChange;
         return (
             <FormField 
                 key={name}
-                onChange={onChange}
+                onChange={changeHandler}
                 value={values[name]}
                 error={errors[name]} 
                 touched={touched[name]}
                 options={options}
+                date={date}
+                time={time}
                 {...restProps} 
             />
         )
@@ -72,6 +103,16 @@ export function SearchShipByKeyWords() {
         );
     }
 
+    const renderShipInfoForm = () => {
+        return (
+            Object.entries(shipInfoFields)
+                .map(([ name, { options, ...restProps } ]) => {
+                    const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
+                    return renderField({ name, options: opts, restProps, onChangeDate, onChangeTime, date, time })
+                })
+        );
+    }
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
@@ -80,6 +121,15 @@ export function SearchShipByKeyWords() {
                         { renderSearchShipForm() }
                     </Col>
                 </Row>
+                {
+                    selectedShipData && (
+                        <Row className='justify-content-md-center'>
+                            <Col xs={6}>
+                                { renderShipInfoForm() }
+                            </Col>
+                        </Row>
+                    )
+                }
             </form>
         </div>
     )
