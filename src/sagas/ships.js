@@ -37,12 +37,17 @@ function* searchShipByKeyWord(action) {
 }
 
 function* saveShipData(action) {
-  const { payload } = action;
+  console.log(action);
+  const { payload: { data, onSuccess } } = action;
   try {
-    const result = yield call(apiPostShipData, payload.data);
+    yield call(apiPostShipData, data);
+    console.log(onSuccess);
+    if (onSuccess) {
+      onSuccess();
+    }
   }
   catch(error) {
-
+    console.log(error);
   }
   finally {
 

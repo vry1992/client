@@ -18,7 +18,12 @@ import {
   errorMinLngDeg,
   errorMaxLngDeg,
   errorMinLngMins,
-  errorMaxLngMins
+  errorMaxLngMins,
+  dateRegexp,
+  frequencyRegexp,
+  errorFrequency,
+  personNameAndInitialsRegexp,
+  textAreaRegexp
 } from '../../../constants/validation';
 
 const getUnitNameSchema = (required) => {
@@ -88,6 +93,7 @@ const getPelengSchema = (required) => {
 const getSearchSchema = (required) => {
   const schema = yup
     .string()
+    .nullable()
     .matches(shipNameRegexp, errorFieldMessage);
 
   return required ? schema.required(requiredFieldMessage) : schema.notRequired()
@@ -96,7 +102,6 @@ const getSearchSchema = (required) => {
 const getDateSchema = (required) => {
   const schema = yup
     .string()
-    .matches(dateRegexp, errorFieldMessage);
 
   return required ? schema.required(requiredFieldMessage) : schema.notRequired()
 };
@@ -104,7 +109,6 @@ const getDateSchema = (required) => {
 const getTimeSchema = (required) => {
   const schema = yup
     .string()
-    .matches(timeRegexp, errorFieldMessage);
 
   return required ? schema.required(requiredFieldMessage) : schema.notRequired()
 }
@@ -113,18 +117,23 @@ const getLatitudeDegsSchema = (required) => {
   const schema = yup
     .number()
     .min(-90, errorMinlatDeg)
-    .max(90, errorMaxlatDeg)
-
-  return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+    .max(90, errorMaxlatDeg);
+    
+    return required ? schema.required(requiredFieldMessage) : schema.notRequired()
 }
 
-const getLatitudeMinsSchema = (required) => {
+const getLatitudeMinsSchema = () => {
   const schema = yup
     .number()
     .min(0, errorMinlatMins)
     .max(60, errorMaxlatMins)
+    .when('latitudeDegs', {
+      is: (value) => !isNaN(value),
+      then: (rule) => rule.required(requiredFieldMessage),
+      otherwise: (rule) => rule.notRequired(),
+    });
 
-  return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+  return schema;
 }
 
 const getLongitudeDegsSchema = (required) => {
@@ -133,7 +142,7 @@ const getLongitudeDegsSchema = (required) => {
     .min(0, errorMinLngDeg)
     .max(180, errorMaxLngDeg)
 
-  return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+    return required ? schema.required(requiredFieldMessage) : schema.notRequired()
 }
 
 const getLongitudeMinsSchema = (required) => {
@@ -141,9 +150,39 @@ const getLongitudeMinsSchema = (required) => {
     .number()
     .min(0, errorMinLngMins)
     .max(60, errorMaxLngMins)
+    .when('longitudeDegs', {
+      is: (value) => !isNaN(value),
+      then: (rule) => rule.required(requiredFieldMessage),
+      otherwise: (rule) => rule.notRequired(),
+    })
 
-  return required ? schema.required(requiredFieldMessage) : schema.notRequired()
-}
+  return schema;
+};
+
+const getFrequencySchema = (required) => {
+  const schema = yup
+    .string()
+    .matches(frequencyRegexp, errorFrequency)
+
+return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+};
+
+const getPersonNameAndInitialsSchema = (required) => {
+  const schema = yup
+    .string()
+    .matches(personNameAndInitialsRegexp, errorFieldMessage)
+
+return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+};
+
+const getTextAreaSchema = (required) => {
+  const schema = yup
+    .string()
+    .matches(textAreaRegexp, errorFieldMessage)
+
+return required ? schema.required(requiredFieldMessage) : schema.notRequired()
+};
+
 
 export {
   getUnitNameSchema,
@@ -160,5 +199,8 @@ export {
   getLatitudeDegsSchema,
   getLatitudeMinsSchema,
   getLongitudeDegsSchema,
-  getLongitudeMinsSchema
+  getLongitudeMinsSchema,
+  getFrequencySchema,
+  getPersonNameAndInitialsSchema,
+  getTextAreaSchema
 }

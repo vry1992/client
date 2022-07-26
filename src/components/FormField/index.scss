@@ -52,3 +52,11 @@ input[type=time]::-webkit-calendar-picker-indicator {
   left: 40px;
   top: 24px;
 }
+
+.invalid-field {
+  border-color: #dc3545;
+
+  & +.invalid-feedback {
+    display: block;
+  }
+}

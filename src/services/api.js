@@ -34,6 +34,5 @@ export async function apiPostSearchShipKeyword(body) {
 }
 
 export async function apiPostShipData(body) {
-  const { data } = await api.post('/ship/add-data', body);
-  return normalizeSearchShipKeyword(data);
+  await api.post('/ship/add-data', body);
 }

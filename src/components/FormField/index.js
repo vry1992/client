@@ -99,6 +99,7 @@ export function FormField(fieldProps) {
         <input id={fieldName} type={type} placeholder={placeholder} value={time?.value || ''} onChange={onChange}/>
         <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
         { time?.value && <span className='emit-date-time-value'>{ time.value }</span> }
+        { error && touched && (<Form.Control.Feedback type='invalid'>{ error }</Form.Control.Feedback>)}
       </div>
     );
   };
@@ -109,6 +110,7 @@ export function FormField(fieldProps) {
         <input id={fieldName} type={type} placeholder={placeholder} onChange={onChange} value={date?.value || ''}/>
         <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
         { date?.value && <span className='emit-date-time-value'>{ date.value }</span> }
+        { error && touched && (<Form.Control.Feedback type='invalid'>{ error }</Form.Control.Feedback>)}
       </div>
     );
   };
@@ -123,8 +125,10 @@ export function FormField(fieldProps) {
           name={fieldName}
           id={fieldName}
           onBlur={onBlur}
+          className={error && touched && 'invalid-field'}
           style={{ height: '100px' }}
         />
+         { error && touched && (<Form.Control.Feedback type='invalid'>{ error }</Form.Control.Feedback>)}
       </FloatingLabel>
     );
   }

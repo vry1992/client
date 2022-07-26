@@ -14,54 +14,83 @@ import { coordinatesConverter } from '../../helpers';
 import { CustomButton } from '../CustomButton';
 
 const initialValues = Object.fromEntries(Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => [item, '']));
-console.log(initialValues);
 
 export function SearchShipByKeyWords({
     selectedShipData,
+    resetShipList
 }) {
     const dispatch = useDispatch();
     const units = useSelector(getUnitNames);
-    const { validationSchema } = useValidation(searchShipFormConfig);
-    const { checkIsFormValid, isFormValid } = useForm(searchShipFormConfig);
+    const { validationSchema } = useValidation({ ...searchShipFormConfig, ...shipInfoFields });
+    const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
     const [date, setDate] = useState(null);
     const [time, setTime] = useState(null);
-    const [coordinates, setCoordinates] = useState({
-        latitudeDegs: 0,
-        latitudeMinutes: 0,
-        longitudeDegs: 0,
-        longitudeMinutes: 0,
-    });
 
-    const { values, handleChange, handleSubmit, errors, touched, setFieldError, setFieldValue } = useFormik({
+    const { 
+        values, 
+        setFieldTouched, 
+        handleChange, 
+        handleSubmit, 
+        handleBlur, 
+        errors, 
+        touched, 
+        setFieldError, 
+        setFieldValue,
+        resetForm,
+        setValues
+    } = useFormik({
         initialValues,
         validationSchema,
-        initialTouched: { search: true },
         onSubmit: onSubmit
     });
 
     function onSuccessSubmit() {
-        console.log('success submit ship data');
+        setDate(null);
+        setTime(null);
+        setValues(initialValues);
+        resetForm();
+        resetShipList();
     };
 
     function onFailSubmit() {
-        console.log('fail submit ship data');
+        setDate(null);
+        setTime(null);
+        setValues(initialValues);
+        resetForm();
+        resetShipList();
     };
 
     function onSubmit() {
-        const { date, time, latitude, longitude, peleng, additionalInformation, personName } = values;
+        const { 
+            date, 
+            time, 
+            peleng, 
+            additionalInformation, 
+            personName, 
+            latitudeDegs, 
+            latitudeMinutes, 
+            longitudeDegs, 
+            longitudeMinutes, 
+            frequency, 
+            companionCallsign, 
+            shipCallsign
+        } = values;
         const dataToSubmit = {
             shipId: selectedShipData.shipId,
             discoverTimestamp: date + time,
             personName,
-            ...(latitude && { latitude }),
-            ...(longitude && { longitude }),
+            frequency,
+            ...(latitudeDegs && latitudeMinutes && { latitude: coordinatesConverter(latitudeDegs, latitudeMinutes) }),
+            ...(longitudeDegs && longitudeMinutes && { longitude: coordinatesConverter(longitudeDegs, longitudeMinutes) }),
             ...(peleng && { peleng }),
             ...(additionalInformation && { additionalInformation }),
+            ...(shipCallsign && { shipCallsign }),
+            ...(companionCallsign && { companionCallsign }),
         }
         dispatch(postShipData({
             data: dataToSubmit,
             onSuccess: onSuccessSubmit,
-            onSuccess: onFailSubmit,
+            onError: onFailSubmit,
         }))
     };
 
@@ -75,7 +104,10 @@ export function SearchShipByKeyWords({
 
     function onChange(event) {
         handleChange(event);
-        const { target: { value } } = event;
+        const { target: { value, name } } = event;
+        if (name === 'search') {
+            setFieldTouched('search', true);
+        }
         if (!selectedShipData && value.length && value.length % 3 === 0) {
             onSubmitSearch({ data: { search: value }, onError: onFailSearch });
         }
@@ -94,42 +126,29 @@ export function SearchShipByKeyWords({
         setFieldValue('date', valueAsNumber);
     };
 
-    function onChangeCoordinates({ target: { name, value } }) {
-        setCoordinates({ ...coordinates, [name]: +value })
-    }
-
     useEffect(() => {
         checkIsFormValid(errors, values);
     }, [values, errors]);
 
     useEffect(() => {
-        const { 
-            latitudeDegs,
-            latitudeMinutes,
-            longitudeDegs,
-            longitudeMinutes
-        } = coordinates;
-        setFieldValue('longitude', coordinatesConverter(longitudeDegs, longitudeMinutes));
-        setFieldValue('latitude', coordinatesConverter(latitudeDegs, latitudeMinutes));
-    }, [coordinates, setFieldValue]);
-
-    useEffect(() => {
         selectedShipData && setFieldValue('search', selectedShipData.shipName);
     }, [selectedShipData]);
 
-    const renderField = ({ name, options, date, time, onChange, ...restProps }) => {
+    const renderField = ({ name, options, date, time, onChange, columnWidth = 10, ...restProps }) => {
         return (
-            <FormField 
-                key={name}
-                onChange={onChange}
-                value={values[name]}
-                error={errors[name]} 
-                touched={touched[name]}
-                options={options}
-                date={date}
-                time={time}
-                {...restProps} 
-            />
+            <Col xs={columnWidth} key={name}>
+                <FormField 
+                    onChange={onChange}
+                    value={values[name]}
+                    error={errors[name]} 
+                    touched={touched[name]}
+                    options={options}
+                    date={date}
+                    time={time}
+                    {...restProps} 
+                />
+            </Col>
+
         )
     }
 
@@ -143,26 +162,16 @@ export function SearchShipByKeyWords({
         );
     };
 
-    const renderLatLngFields = ({ name: fieldName, ...fieldProps }) => {
-        return (
-            <Col span={6} key={fieldName}>
-                { renderField({ name: fieldName, onChange: onChangeCoordinates, ...fieldProps }) }
-            </Col>
-        )
-    }
-
     const renderShipInfoForm = () => {
         return (
             Object.entries(shipInfoFields)
                 .map(([ name, { options, ...restProps } ]) => {
                     const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
-                    if (name === 'latitudeDegs' || name === 'latitudeMinutes' || name === 'longitudeDegs' || name === 'longitudeMinutes' ) {
-                        return renderLatLngFields({ name, ...restProps });
-                    }
                     return renderField({ 
                         name, 
                         options: opts,
                         onChange,
+                        onBlur: handleBlur,
                         date,
                         time,
                         ...( name === 'time' && { onChange: onChangeTime }),
@@ -177,15 +186,13 @@ export function SearchShipByKeyWords({
         <div>
             <form onSubmit={handleSubmit}>
                 <Row className='justify-content-md-center'>
-                    <Col xs={6} sm={12}>
-                        { renderSearchShipForm() }
-                    </Col>
+                    { renderSearchShipForm() }
                 </Row>
                 {
                     selectedShipData && (
                         <Row className='justify-content-md-center'>
-                            <Col xs={6} sm={8}>
-                                { renderShipInfoForm() }
+                            { renderShipInfoForm() }
+                            <Col xs={10}>
                                 <CustomButton text='Зберегти' type='submit' disabled={!isFormValid}/>
                             </Col>
                         </Row>
