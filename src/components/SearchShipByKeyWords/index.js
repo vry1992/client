@@ -14,6 +14,7 @@ import { coordinatesConverter } from '../../helpers';
 import { CustomButton } from '../CustomButton';
 
 const initialValues = Object.fromEntries(Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => [item, '']));
+console.log(initialValues);
 
 export function SearchShipByKeyWords({
     selectedShipData,
@@ -142,17 +143,11 @@ export function SearchShipByKeyWords({
         );
     };
 
-    const renderLatLngFields = (name) => {
+    const renderLatLngFields = ({ name: fieldName, ...fieldProps }) => {
         return (
-            <Row key={name}>
-                { Object.entries(shipInfoFields[name]).map(([fieldName, fieldProps]) => {
-                    return (
-                        <Col key={fieldName}>
-                            { renderField({ name: fieldName, onChange: onChangeCoordinates, ...fieldProps }) }
-                        </Col>
-                    )
-                })}
-            </Row>
+            <Col span={6} key={fieldName}>
+                { renderField({ name: fieldName, onChange: onChangeCoordinates, ...fieldProps }) }
+            </Col>
         )
     }
 
@@ -161,8 +156,8 @@ export function SearchShipByKeyWords({
             Object.entries(shipInfoFields)
                 .map(([ name, { options, ...restProps } ]) => {
                     const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
-                    if (name === 'latitude' || name === 'longitude') {
-                        return renderLatLngFields(name);
+                    if (name === 'latitudeDegs' || name === 'latitudeMinutes' || name === 'longitudeDegs' || name === 'longitudeMinutes' ) {
+                        return renderLatLngFields({ name, ...restProps });
                     }
                     return renderField({ 
                         name, 

@@ -8,7 +8,13 @@ import {
   getProjectSchema,
   getShipTypeSchema,
   getPelengSchema,
-  getSearchSchema
+  getSearchSchema,
+  getDateSchema,
+  getTimeSchema,
+  getLatitudeDegsSchema,
+  getLatitudeMinsSchema,
+  getLongitudeDegsSchema,
+  getLongitudeMinsSchema
 } from './schemas';
 
 export function useValidation(fieldsToValdate = {}) {
@@ -22,6 +28,12 @@ export function useValidation(fieldsToValdate = {}) {
     ...( fieldsToValdate.shipType && { shipType: getShipTypeSchema(fieldsToValdate.shipType.required) } ),
     ...( fieldsToValdate.peleng && { peleng: getPelengSchema(fieldsToValdate.peleng.required) } ),
     ...( fieldsToValdate.search && { search: getSearchSchema(fieldsToValdate.search.required) } ),
+    ...( fieldsToValdate.time && { time: getDateSchema(fieldsToValdate.time.required) } ),
+    ...( fieldsToValdate.date && { date: getTimeSchema(fieldsToValdate.date.required) } ),
+    ...( fieldsToValdate.latitudeDegs && { latitudeDegs: getLatitudeDegsSchema(fieldsToValdate.latitudeDegs.required) } ),
+    ...( fieldsToValdate.latitudeMinutes && { latitudeMinutes: getLatitudeMinsSchema(fieldsToValdate.latitudeMinutes.required) } ),
+    ...( fieldsToValdate.longitudeDegs && { longitudeDegs: getLongitudeDegsSchema(fieldsToValdate.longitudeDegs.required) } ),
+    ...( fieldsToValdate.longitudeMinutes && { longitudeMinutes: getLongitudeMinsSchema(fieldsToValdate.longitudeMinutes.required) } ),
   });
 
   return { validationSchema }

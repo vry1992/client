@@ -24,45 +24,41 @@ export const shipInfoFields = {
         fieldName: 'time',
         required: true
     },
-    latitude: {
-        latitudeDegs: {
-            type: 'number',
-            placeholder: 'Введіть градуси північної широти',
-            label: 'Градуси північної широти',
-            fieldName: 'latitudeDegs',
-            required: false,
-            min: -90,
-            max: 90
-        },
-        latitudeMinutes: {
-            type: 'number',
-            placeholder: 'Введіть мінути північної широти',
-            label: 'Мінути північної широти',
-            fieldName: 'latitudeMinutes',
-            required: false,
-            min: 0,
-            max: 60
-        },
+    latitudeDegs: {
+        type: 'number',
+        placeholder: 'Введіть градуси північної широти',
+        label: 'Градуси північної широти',
+        fieldName: 'latitudeDegs',
+        required: false,
+        min: -90,
+        max: 90
     },
-    longitude: {
-        longitudeDegs: {
-            type: 'number',
-            placeholder: 'Введіть градуси східної довготи',
-            label: 'Градуси східної довготи',
-            fieldName: 'longitudeDegs',
-            required: false,
-            min: 0,
-            max: 180
-        },
-        longitudeMinutes: {
-            type: 'number',
-            placeholder: 'Введіть мінути східної довготи',
-            label: 'Мінути східної довготи',
-            fieldName: 'longitudeMinutes',
-            required: false,
-            min: 0,
-            max: 60
-        },
+    latitudeMinutes: {
+        type: 'number',
+        placeholder: 'Введіть мінути північної широти',
+        label: 'Мінути північної широти',
+        fieldName: 'latitudeMinutes',
+        required: false,
+        min: 0,
+        max: 60
+    },
+    longitudeDegs: {
+        type: 'number',
+        placeholder: 'Введіть градуси східної довготи',
+        label: 'Градуси східної довготи',
+        fieldName: 'longitudeDegs',
+        required: false,
+        min: 0,
+        max: 180
+    },
+    longitudeMinutes: {
+        type: 'number',
+        placeholder: 'Введіть мінути східної довготи',
+        label: 'Мінути східної довготи',
+        fieldName: 'longitudeMinutes',
+        required: false,
+        min: 0,
+        max: 60
     },
     peleng: {
         type: 'number',
@@ -72,6 +68,27 @@ export const shipInfoFields = {
         required: false,
         min: 0,
         max: 360
+    },
+    shipCallsign: {
+        type: 'text',
+        placeholder: 'Позивний під яким виходив на зв\'язок',
+        label: 'Позивний під яким виходив на зв\'язок',
+        fieldName: 'shipCallsign',
+        required: false,
+    },
+    companionCallsign: {
+        type: 'text',
+        placeholder: 'Позивний того з ким виходив на зв\'язок',
+        label: 'Позивний того з ким виходив на зв\'язок',
+        fieldName: 'companionCallsign',
+        required: false,
+    },
+    frequency: {
+        type: 'text',
+        placeholder: 'Частота на якій спостерігалось, наприклад 0000 або 123.456',
+        label: 'Частота на якій спостерігалось, наприклад 0000 або 123.456',
+        fieldName: 'frequency',
+        required: true,
     },
     personName: {
         type: 'text',
