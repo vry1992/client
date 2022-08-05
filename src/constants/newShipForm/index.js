@@ -1,3 +1,14 @@
+import { shipTypes } from "..";
+
+const getTypesOptions = () => {
+    const sortedByAlphabet = Object.entries(shipTypes).sort(([, {name: a}], [, {name: b}]) => {
+        if (a > b) return 1;
+        if (a < b) return -1;
+        return 0;
+    })
+    return Object.fromEntries(sortedByAlphabet.map(([type, { name }]) => ([type, name])));
+}
+
 export const newShipFormConfig = {
     shipName: {
         type: 'text',
@@ -26,14 +37,7 @@ export const newShipFormConfig = {
         label: 'Тип',
         fieldName: 'shipType',
         required: true,
-        options: {
-            fr: 'Фрегат',
-            rk: 'Ракетний корабель',
-            rka: 'Ракетний катер',
-            pchk: 'Протичовновий корабель',
-            tr: 'Тральщик',
-            srzk: 'Середній розвідувальний корабель'
-        }
+        options: getTypesOptions()
     },
     shipUnit: {
         type: 'select',

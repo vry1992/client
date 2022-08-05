@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SearchShipByKeyWords } from '../../components/SearchShipByKeyWords';
 import { Headline } from '../../components/Headline';
 import { Col, ListGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSearchShipsList } from '../../selectors';
-import './index.scss';
+import { getSearchShipsList, getUnitNames } from '../../selectors';
 import { setSearchShipsList } from '../../reducers/ships';
+import { RefuseAddNewShipModal } from '../../components/RefuseAddNewSipModal';
+import './index.scss';
+import { routesConfig } from '../../routing';
 
 export function ShipInfo() {
     const dispatch = useDispatch()
     const searchShipsList = useSelector(getSearchShipsList);
     const [selectedShipData, setSelectedShipData] = useState(null);
+    const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
+    const units = useSelector(getUnitNames);
+    const navigate = useNavigate();
 
     function shipsListClickHandler(shipData) {
         setSelectedShipData(shipData)
@@ -20,6 +26,20 @@ export function ShipInfo() {
         setSelectedShipData(null);
         dispatch(setSearchShipsList([]))
     }
+
+    useEffect(() => {
+        if (Object.keys(units).length === 0) {
+            setIsRefuseModalOpen(true);
+        }
+        else {
+            setIsRefuseModalOpen(false);
+        }
+    }, [units]);
+
+    const navigateToAddUnitPage = () => {
+        setIsRefuseModalOpen(false)
+        navigate(routesConfig.addNewShip.path);
+    };
 
     function renderShipsList() {
         return (
@@ -42,6 +62,12 @@ export function ShipInfo() {
             <Headline text='Додати інформацію про виявлений корабель'/>
             <SearchShipByKeyWords selectedShipData={selectedShipData} resetShipList={resetShipList}/>
             { !selectedShipData && renderShipsList() }
+            {iseRefuseModalOpen && <RefuseAddNewShipModal 
+                show={iseRefuseModalOpen} 
+                onClick={navigateToAddUnitPage}
+                text='Немає жодного доданого корабля.'
+                buttonText='Додати корабель'
+            />}
         </div>
     )
 }

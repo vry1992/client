@@ -6,13 +6,15 @@ import { Paragraph } from "../Paragraph";
 export function RefuseAddNewShipModal(
     {
         show,
-        onClick
+        onClick,
+        text = 'Спочатку потрібно додати хоча б один підрозділ',
+        buttonText = 'Додати підрозділи'
     }
 ) {
     return (
         <Modal show={show}>
-            <Paragraph text='Спочатку потрібно додати хоча б один підрозділ' />
-            <CustomButton onClick={onClick} text='Додати підрозділи' />
+            <Paragraph text={text} />
+            <CustomButton onClick={onClick} text={buttonText} />
         </Modal>
     )
 }
