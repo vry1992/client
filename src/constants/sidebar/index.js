@@ -22,5 +22,9 @@ export const sidebarLinks = {
         type: 'flowSidebarOpener',
         label: 'Пеленг',
         clickHandler: setPelengationPanelState,
+    },
+    search: {
+        type: 'navigation',
+        label: 'Пошук',
     }
 }

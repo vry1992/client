@@ -7,15 +7,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getSearchShipsList, getUnitNames } from '../../selectors';
 import { setSearchShipsList } from '../../reducers/ships';
 import { RefuseAddNewShipModal } from '../../components/RefuseAddNewSipModal';
-import './index.scss';
 import { routesConfig } from '../../routing';
+import './index.scss';
 
 export function ShipInfo() {
     const dispatch = useDispatch()
     const searchShipsList = useSelector(getSearchShipsList);
     const [selectedShipData, setSelectedShipData] = useState(null);
     const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
-    const units = useSelector(getUnitNames);
+    const unitNames = useSelector(getUnitNames);
     const navigate = useNavigate();
 
     function shipsListClickHandler(shipData) {
@@ -28,13 +28,13 @@ export function ShipInfo() {
     }
 
     useEffect(() => {
-        if (Object.keys(units).length === 0) {
+        if (Object.keys(unitNames).length === 0) {
             setIsRefuseModalOpen(true);
         }
         else {
             setIsRefuseModalOpen(false);
         }
-    }, [units]);
+    }, [unitNames]);
 
     const navigateToAddUnitPage = () => {
         setIsRefuseModalOpen(false)

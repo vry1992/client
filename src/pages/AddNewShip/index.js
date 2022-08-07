@@ -11,7 +11,7 @@ export function AddNewShip() {
 
     const [iseRefuseModalOpen, setIsRefuseModalOpen] = useState(false);
     const navigate = useNavigate();
-    const units = useSelector(getUnitNames);
+    const unitNames = useSelector(getUnitNames);
 
     const navigateToAddUnitPage = () => {
         setIsRefuseModalOpen(false)
@@ -19,13 +19,13 @@ export function AddNewShip() {
     };
 
     useEffect(() => {
-        if (Object.keys(units).length === 0) {
+        if (Object.keys(unitNames).length === 0) {
             setIsRefuseModalOpen(true);
         }
         else {
             setIsRefuseModalOpen(false);
         }
-    }, [units]);
+    }, [unitNames]);
 
     return (
         <div className='add-new-ship'>

@@ -5,7 +5,12 @@ const api = axios.create({
   timeout: 12000,
 });
 
-const normalizeInitResponse = (data) => {
+const normalizeInitResponse = ({ units, persons_who_added, call_signs }) => {
+  const unitNames = Object.fromEntries(units.map(({ unit_id: unitId, unit_name: unitName }) => ([ unitId, unitName] )));
+  return { unitNames, personsWhoAdded: persons_who_added, callSigns: call_signs };
+}
+
+const normalizePostUnitResponse = (data) => {
   const unitNames = Object.fromEntries(data.map(({ unit_id: unitId, unit_name: unitName }) => ([ unitId, unitName ])));
   return { unitNames };
 }
@@ -21,7 +26,7 @@ export async function apiGetInit() {
 
 export async function apiPostUnit(body) {
   const { data } = await api.post('/unit', body);
-  return normalizeInitResponse(data);
+  return normalizePostUnitResponse(data);
 }
 
 export async function apiPostShip(body) {
@@ -35,4 +40,9 @@ export async function apiPostSearchShipKeyword(body) {
 
 export async function apiPostShipData(body) {
   await api.post('/ship/add-data', body);
+}
+
+export async function apiFilterShipsData(body) {
+  const { data } =  await api.post('/ship/filter', body);
+  return data;
 }

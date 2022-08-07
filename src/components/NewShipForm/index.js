@@ -17,7 +17,7 @@ export function NewShipForm() {
 
     const dispatch = useDispatch();
 
-    const units = useSelector(getUnitNames);
+    const unitNames = useSelector(getUnitNames);
     const { validationSchema } = useValidation(newShipFormConfig);
     const { checkIsFormValid, isFormValid } = useForm(newShipFormConfig);
 
@@ -39,7 +39,7 @@ export function NewShipForm() {
         return (
             Object.entries(newShipFormConfig)
                 .map(([ name, { options, ...restProps } ]) => {
-                    const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
+                    const opts = name === newShipFormConfig.shipUnit.fieldName ? unitNames : options;
                     return (
                         <FormField 
                             key={name}

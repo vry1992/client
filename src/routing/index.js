@@ -9,6 +9,7 @@ import { Layout } from "../components/Layout";
 import { AddNewUnit } from "../pages/AddNewUnit";
 import { Map } from "../pages/Map";
 import { ShipInfo } from "../pages/ShipInfo";
+import { Search } from "../pages/Search";
 
 export const routesConfig = {
     addNewShip: {
@@ -26,6 +27,10 @@ export const routesConfig = {
     shipInfo: {
         path: '/ship-info',
         page: ShipInfo
+    },
+    search: {
+        path: '/search',
+        page: Search
     }
 };
 

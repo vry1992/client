@@ -1,7 +1,7 @@
 import { call, takeEvery, put } from 'redux-saga/effects'
 import { POST_UNIT } from '../actions/newUnit';
 import { apiPostUnit } from '../services/api';
-import { setUnitNames } from '../reducers/units';
+import { setUnitNames } from '../reducers/initialData';
 
 function* postUnit(action) {
   const { payload } = action;

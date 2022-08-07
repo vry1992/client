@@ -1,3 +1,5 @@
+export const msInMonth = 2592000000;
+
 export const shipTypes = {
     rkr: {
         type: 'rkr',

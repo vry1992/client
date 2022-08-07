@@ -39,6 +39,8 @@ export function FormField(fieldProps) {
     </Form.FloatingLabel>
   );
 
+  console.log(options)
+
   const renderSelectField = () => (
     <Form.FloatingLabel
       label={`${label} ${ required ? '*' : '' }`}
@@ -96,7 +98,7 @@ export function FormField(fieldProps) {
   const renderTimeField = () => {
     return (
       <div className='date-time-wrapper'>
-        <input id={fieldName} type={type} placeholder={placeholder} value={time?.value || ''} onChange={onChange}/>
+        <input id={fieldName} type={type} placeholder={placeholder} value={time?.value || ''} onChange={onChange} name={fieldName}/>
         <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
         { time?.value && <span className='emit-date-time-value'>{ time.value }</span> }
         { error && touched && (<Form.Control.Feedback type='invalid'>{ error }</Form.Control.Feedback>)}
@@ -107,7 +109,7 @@ export function FormField(fieldProps) {
   const renderDateField = () => {
     return (
       <div className='date-time-wrapper'>
-        <input id={fieldName} type={type} placeholder={placeholder} onChange={onChange} value={date?.value || ''}/>
+        <input id={fieldName} type={type} placeholder={placeholder} onChange={onChange} value={date?.value || ''} name={fieldName}/>
         <label htmlFor={fieldName}>{`${label} ${ required ? '*' : '' }`}</label>
         { date?.value && <span className='emit-date-time-value'>{ date.value }</span> }
         { error && touched && (<Form.Control.Feedback type='invalid'>{ error }</Form.Control.Feedback>)}

@@ -12,6 +12,7 @@ import { postSearchShipKeyWord, postShipData } from '../../actions/ships';
 import { errorSearchShip } from '../../constants/validation';
 import { coordinatesConverter } from '../../helpers';
 import { CustomButton } from '../CustomButton';
+import './index.scss';
 
 const initialValues = Object.fromEntries(Object.keys({ ...searchShipFormConfig, ...shipInfoFields }).map((item) => [item, '']));
 
@@ -20,21 +21,21 @@ export function SearchShipByKeyWords({
     resetShipList
 }) {
     const dispatch = useDispatch();
-    const units = useSelector(getUnitNames);
+    const unitNames = useSelector(getUnitNames);
     const { validationSchema } = useValidation({ ...searchShipFormConfig, ...shipInfoFields });
     const { checkIsFormValid, isFormValid } = useForm({ ...searchShipFormConfig, ...shipInfoFields });
     const [date, setDate] = useState(null);
     const [time, setTime] = useState(null);
 
-    const { 
-        values, 
-        setFieldTouched, 
-        handleChange, 
-        handleSubmit, 
-        handleBlur, 
-        errors, 
-        touched, 
-        setFieldError, 
+    const {
+        values,
+        setFieldTouched,
+        handleChange,
+        handleSubmit,
+        handleBlur,
+        errors,
+        touched,
+        setFieldError,
         setFieldValue,
         resetForm,
         setValues
@@ -61,18 +62,18 @@ export function SearchShipByKeyWords({
     };
 
     function onSubmit() {
-        const { 
-            date, 
-            time, 
-            peleng, 
-            additionalInformation, 
-            personName, 
-            latitudeDegs, 
-            latitudeMinutes, 
-            longitudeDegs, 
-            longitudeMinutes, 
-            frequency, 
-            companionCallsign, 
+        const {
+            date,
+            time,
+            peleng,
+            additionalInformation,
+            personName,
+            latitudeDegs,
+            latitudeMinutes,
+            longitudeDegs,
+            longitudeMinutes,
+            frequency,
+            companionCallsign,
             shipCallsign
         } = values;
         const dataToSubmit = {
@@ -126,6 +127,11 @@ export function SearchShipByKeyWords({
         setFieldValue('date', valueAsNumber);
     };
 
+    function editButtonClickHandler() {
+        resetShipList();
+        setFieldValue('search', '')
+    }
+
     useEffect(() => {
         checkIsFormValid(errors, values);
     }, [values, errors]);
@@ -137,15 +143,16 @@ export function SearchShipByKeyWords({
     const renderField = ({ name, options, date, time, onChange, columnWidth = 10, ...restProps }) => {
         return (
             <Col xs={columnWidth} key={name}>
-                <FormField 
+                <FormField
                     onChange={onChange}
                     value={values[name]}
-                    error={errors[name]} 
+                    error={errors[name]}
                     touched={touched[name]}
                     options={options}
                     date={date}
                     time={time}
-                    {...restProps} 
+                    name={name}
+                    {...restProps}
                 />
             </Col>
 
@@ -155,9 +162,9 @@ export function SearchShipByKeyWords({
     const renderSearchShipForm = () => {
         return (
             Object.entries(searchShipFormConfig)
-                .map(([ name, { options, ...restProps } ]) => {
-                    const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
-                    return renderField({ name, options: opts, onChange, ...restProps })
+                .map(([name, { options, ...restProps }]) => {
+                    const opts = name === newShipFormConfig.shipUnit.fieldName ? unitNames : options;
+                    return renderField({ name, options: opts, disabled: !!selectedShipData, onChange, ...restProps })
                 })
         );
     };
@@ -165,18 +172,18 @@ export function SearchShipByKeyWords({
     const renderShipInfoForm = () => {
         return (
             Object.entries(shipInfoFields)
-                .map(([ name, { options, ...restProps } ]) => {
-                    const opts = name === newShipFormConfig.shipUnit.fieldName ? units : options;
-                    return renderField({ 
-                        name, 
+                .map(([name, { options, ...restProps }]) => {
+                    const opts = name === newShipFormConfig.shipUnit.fieldName ? unitNames : options;
+                    return renderField({
+                        name,
                         options: opts,
                         onChange,
                         onBlur: handleBlur,
                         date,
                         time,
-                        ...( name === 'time' && { onChange: onChangeTime }),
-                        ...( name === 'date' && { onChange: onChangeDate }),
-                        ...restProps 
+                        ...(name === 'time' && { onChange: onChangeTime }),
+                        ...(name === 'date' && { onChange: onChangeDate }),
+                        ...restProps
                     })
                 })
         );
@@ -186,14 +193,23 @@ export function SearchShipByKeyWords({
         <div>
             <form onSubmit={handleSubmit}>
                 <Row className='justify-content-md-center'>
-                    { renderSearchShipForm() }
+                    {renderSearchShipForm()}
+                    {
+                        selectedShipData && (
+                            <Col xs='10'>
+                                <div className='edit-button'>
+                                    <CustomButton text='Змінити' iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`} onClick={editButtonClickHandler}/>
+                                </div>
+                            </Col>
+                        )
+                    }
                 </Row>
                 {
                     selectedShipData && (
                         <Row className='justify-content-md-center'>
-                            { renderShipInfoForm() }
+                            {renderShipInfoForm()}
                             <Col xs={10}>
-                                <CustomButton text='Зберегти' type='submit' disabled={!isFormValid}/>
+                                <CustomButton text='Зберегти' type='submit' disabled={!isFormValid} />
                             </Col>
                         </Row>
                     )

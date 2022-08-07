@@ -12,14 +12,14 @@ import './index.scss';
 
 export function Sidebar() {
 
-    const units = useSelector(getUnitNames);
+    const unitNames = useSelector(getUnitNames);
     const dispatch = useDispatch();
     const location = useLocation();
 
     const canBeDisabled = [routesConfig.addNewShip.path, routesConfig.shipInfo.path];
 
     const renderListItems = (link, { type, label, iconPath, clickHandler }) => {
-        const isDisabled = canBeDisabled.includes(routesConfig[link]?.path) && !Object.keys(units).length;
+        const isDisabled = canBeDisabled.includes(routesConfig[link]?.path) && !Object.keys(unitNames).length;
         return (
             <ListGroup.Item as='li' key={link} onClick={clickHandler} active={location.pathname === routesConfig[link]?.path} disabled={isDisabled}>
                 {type === 'navigation' && <Link to={routesConfig[link].path}>{ label }</Link>}
