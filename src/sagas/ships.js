@@ -1,6 +1,7 @@
 import { call, takeEvery, takeLatest, put } from 'redux-saga/effects'
 import { POST_FILTER_SHIPS, POST_SEARCH_SHIP_KEYWORD, POST_SHIP, POST_SHIP_DATA } from '../actions/ships';
-import { setSearchShipsList } from '../reducers/ships';
+import { setInitData } from '../reducers/initialData';
+import { setSearchShipsList, setShipsFilter } from '../reducers/ships';
 import { apiFilterShipsData, apiPostSearchShipKeyword, apiPostShip, apiPostShipData } from '../services/api';
 
 function* postShip(action) {
@@ -39,7 +40,8 @@ function* searchShipByKeyWord(action) {
 function* saveShipData(action) {
   const { payload: { data, onSuccess, onError } } = action;
   try {
-    yield call(apiPostShipData, data);
+    const result = yield call(apiPostShipData, data);
+    yield put(setInitData(result))
     if (onSuccess) {
       onSuccess();
     }
@@ -58,7 +60,8 @@ function* saveShipData(action) {
 function* filterShips(action) {
   const { payload: { data, onSuccess, onError } } = action;
   try {
-    yield call(apiFilterShipsData, data);
+    const filterResult = yield call(apiFilterShipsData, data);
+    yield put(setShipsFilter(filterResult));
     if (onSuccess) {
       onSuccess();
     }

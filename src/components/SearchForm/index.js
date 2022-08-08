@@ -6,22 +6,24 @@ import { searchFormFields } from '../../constants/searchForm';
 import { useForm } from '../../hooks/useForm';
 import { useValidation } from '../../hooks/useValidation';
 import { CustomButton } from '../CustomButton';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { filterShips } from '../../actions/ships';
-import { getDefaultDateFrom, getDefaultDateTo } from '../../helpers';
+import { getDefaultDateFrom, getDefaultDateTo, getSelectOptionsFromArray } from '../../helpers';
+import { getShipNamesOptions, getCallSignsOptions, getPersonsWhoAddedOptions } from '../../selectors';
 
 const initialValues = Object.fromEntries(Object.keys(searchFormFields).map((item) => [item, '']));
 
 export function SearchForm() {
     const { validationSchema } = useValidation(searchFormFields);
     const { checkIsFormValid, isFormValid } = useForm(searchFormFields);
+    const shipNamesOptions = useSelector(getShipNamesOptions);
+    const callSignsOptions = useSelector(getCallSignsOptions);
+    const personsWhoAddedOptions = useSelector(getPersonsWhoAddedOptions);
     const [dateFrom, setDateFrom] = useState(getDefaultDateFrom());
     const [timeFrom, setTimeFrom] = useState(null);
     const [dateTo, setDateTo] = useState(getDefaultDateTo());
     const [timeTo, setTimeTo] = useState(null);
     const dispatch = useDispatch();
-
-
 
     const { values, handleSubmit, handleBlur, handleChange, touched, errors, setFieldValue } = useFormik({
         initialValues,
@@ -30,12 +32,12 @@ export function SearchForm() {
     });
 
     function onSubmit() {
-        const {frequency, personName, search, shipCallsign} = values;
+        const {frequency, personNameList, shipNameList, shipCallsignList} = values;
         const dataToSubmit = {
             ...(frequency && { frequency }),
-            ...(personName && { personName }),
-            ...(search && { search }),
-            ...(shipCallsign && { shipCallsign: shipCallsign.split(', ') }),
+            personNameList: personNameList ? personNameList.map(({ label }) => label) : [],
+            shipNameList: shipNameList ? shipNameList.map(({ label }) => label) : [],
+            shipCallsignList: shipCallsignList ? shipCallsignList.map(({ label }) => label) : [],
             dateTo: dateTo.dateMS + (timeTo?.timeMS || 0),
             dateFrom: dateFrom.dateMS + (timeFrom?.timeMS || 0),
         };
@@ -44,6 +46,12 @@ export function SearchForm() {
             onSuccess: () => console.log('success'),
             onError: () => console.log('error'),
         }))
+    }
+
+    const getMultyselectOptions = (name) => {
+        if (name === searchFormFields.shipNameList.fieldName) return getSelectOptionsFromArray(shipNamesOptions);
+        else if (name === searchFormFields.shipCallsignList.fieldName) return getSelectOptionsFromArray(callSignsOptions);
+        else if (name === searchFormFields.personNameList.fieldName) return getSelectOptionsFromArray(personsWhoAddedOptions);
     }
 
     const renderField = ({ name, onChange, columnWidth = 10, ...restProps }) => {
@@ -93,16 +101,22 @@ export function SearchForm() {
         setFieldValue(name, valueAsNumber);
     };
 
+    function selectMultyple(name, selected) {
+        setFieldValue(name, selected)
+    }
+
     const renderSearchForm = () => {
         return (
             Object.entries(searchFormFields)
-                .map(([name, { options, ...restProps }]) => {
+                .map(([name, props]) => {
                     return renderField({
                         name,
                         onChange: handleChange,
-                        ...(restProps.type === 'time' && { onChange: onChangeTime }),
-                        ...(restProps.type === 'date' && { onChange: onChangeDate }),
-                        ...restProps
+                        ...(props.type === 'time' && { onChange: onChangeTime }),
+                        ...(props.type === 'date' && { onChange: onChangeDate }),
+                        ...(props.multiple && { selectMultyple }),
+                        ...props,
+                        options: getMultyselectOptions(name)
                     })
                 })
         );
@@ -116,11 +130,11 @@ export function SearchForm() {
         <div>
             <form onSubmit={handleSubmit}>
                 <Row className='justify-content-md-center'>
-                    {renderSearchForm()}
+                    { renderSearchForm() }
                 </Row>
                 <Row className='justify-content-md-center'>
                     <Col xs={10}>
-                        <CustomButton text='Пошук' type='submit' disabled={!isFormValid} />
+                        <CustomButton text='Пошук' type='submit' />
                     </Col>
                 </Row>
 

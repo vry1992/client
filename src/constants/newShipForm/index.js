@@ -1,12 +1,12 @@
 import { shipTypes } from "..";
 
 const getTypesOptions = () => {
-    const sortedByAlphabet = Object.entries(shipTypes).sort(([, {name: a}], [, {name: b}]) => {
-        if (a > b) return 1;
-        if (a < b) return -1;
+    const sortedByAlphabet = Object.values(shipTypes).sort((a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
         return 0;
-    })
-    return Object.fromEntries(sortedByAlphabet.map(([type, { name }]) => ([type, name])));
+    });
+    return sortedByAlphabet.map(({ type, name }) => ({ key: type, label: name }));
 }
 
 export const newShipFormConfig = {
@@ -33,6 +33,7 @@ export const newShipFormConfig = {
     },
     shipType: {
         type: 'select',
+        multiple: false,
         placeholder: 'Тип',
         label: 'Тип',
         fieldName: 'shipType',
@@ -45,7 +46,7 @@ export const newShipFormConfig = {
         label: 'Підрозділ',
         fieldName: 'shipUnit',
         required: true,
-        options: {}
+        options: []
     },
     city: {
         type: 'text',

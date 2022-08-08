@@ -18,3 +18,7 @@ export const getDefaultDateTo = () => {
         dateMS: Date.now()
     };
 };
+
+export const getSelectOptionsFromArray = (array) => {
+    return array.map(item => ({ key: item, label: item }))
+};

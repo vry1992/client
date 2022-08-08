@@ -1,27 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  unitNames: {},
+  unitNames: [],
   personsWhoAdded: [],
-  callSigns: []
+  callSigns: [],
+  shipNames: []
 }
 
 export const initialDataSlice = createSlice({
   name: 'initialData',
   initialState,
   reducers: {
-    setInitData: (state, { payload: { unitNames, personsWhoAdded, callSigns }}) => {
-      state.unitNames = unitNames;
-      state.personsWhoAdded = personsWhoAdded;
-      state.callSigns = callSigns;
-    },
-    setUnitNames: (state, { unitNames }) => {
-      state.unitNames = unitNames;
+    setInitData: (state, { payload }) => {
+      Object.entries(payload).forEach(([key, value]) => {
+        state[key] = value;
+      })
     },
   },
 });
 
-export const { setInitData, setUnitNames } = initialDataSlice.actions;
+export const { setInitData } = initialDataSlice.actions;
 const { reducer: initialDataReducer } = initialDataSlice;
 
 export {

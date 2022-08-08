@@ -27,13 +27,15 @@ export const searchFormFields = {
         fieldName: 'timeTo',
         columnWidth: 5
     },
-    search: {
-        type: 'text',
-        placeholder: 'Введіть назву корабля',
-        label: 'Введіть назву корабля',
-        fieldName: 'search',
+    shipNameList: {
+        type: 'select',
+        multiple: true,
+        placeholder: 'Оберіть назви кораблів',
+        label: 'Оберіть назви кораблів',
+        fieldName: 'shipNameList',
         autoComplete: 'off',
-        columnWidth: 5
+        columnWidth: 5,
+        options: []
     },
     frequency: {
         type: 'text',
@@ -42,18 +44,24 @@ export const searchFormFields = {
         fieldName: 'frequency',
         columnWidth: 5
     },
-    shipCallsign: {
-        type: 'text',
-        placeholder: 'Позивні через кому, наприклад: Позивний1, позивний2, позивний3',
-        label: 'Позивні через кому, наприклад: Позивний1, позивний2, позивний3',
-        fieldName: 'shipCallsign',
-        columnWidth: 5
+    shipCallsignList: {
+        type: 'select',
+        multiple: true,
+        placeholder: 'Оберіть позивні',
+        label: 'Оберіть позивні',
+        fieldName: 'shipCallsignList',
+        autoComplete: 'off',
+        columnWidth: 5,
+        options: []
     },
-    personName: {
-        type: 'text',
-        placeholder: 'Прізвище та ініціали того хто добавив запис',
-        label: 'Прізвище та ініціали того хто добавив запис',
-        fieldName: 'personName',
-        columnWidth: 5
+    personNameList: {
+        type: 'select',
+        multiple: true,
+        placeholder: 'Оберіть того хто добавив запис',
+        label: 'Оберіть того хто добавив запис',
+        fieldName: 'personNameList',
+        columnWidth: 5,
+        autoComplete: 'off',
+        options: []
     },
 };

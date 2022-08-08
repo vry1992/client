@@ -5,9 +5,21 @@ const api = axios.create({
   timeout: 12000,
 });
 
-const normalizeInitResponse = ({ units, persons_who_added, call_signs }) => {
-  const unitNames = Object.fromEntries(units.map(({ unit_id: unitId, unit_name: unitName }) => ([ unitId, unitName] )));
-  return { unitNames, personsWhoAdded: persons_who_added, callSigns: call_signs };
+const normalizeInitResponse = ({ units: unitNames, persons_who_added: personsWhoAdded, call_signs: callSigns, ships: shipNames }) => {
+  return { 
+    unitNames: unitNames.map(({ unit_id: unitId, unit_name: unitName }) => ({ unitId, unitName })), 
+    personsWhoAdded, 
+    callSigns, 
+    shipNames
+  };
+}
+
+const normalizePostShipDataResponse = ({ persons_who_added: personsWhoAdded, call_signs: callSigns, ships: shipNames }) => {
+  return { 
+    personsWhoAdded, 
+    callSigns, 
+    shipNames
+  };
 }
 
 const normalizePostUnitResponse = (data) => {
@@ -20,7 +32,7 @@ const normalizeSearchShipKeyword = (data) => {
 }
 
 export async function apiGetInit() {
-  const { data } = await api.get('/init');
+  const { data } = await api.get('/dictionary');
   return normalizeInitResponse(data);
 }
 
@@ -39,10 +51,39 @@ export async function apiPostSearchShipKeyword(body) {
 }
 
 export async function apiPostShipData(body) {
-  await api.post('/ship/add-data', body);
+  const { data } = await api.post('/ship/add-data', body);
+  return normalizePostShipDataResponse(data);
 }
+
+const normalizeFilterResponse = (data) => {
+  return data.map(({
+    additional_information: additionalInformation,
+    companion_callsign: companionCallsign,
+    create_timestamp: createTimestamp,
+    data_id: dataId,
+    discover_timestamp: discoverTimestamp,
+    edit_timestamp: editTimestamp,
+    fk_ship_data_id: shipId,
+    frequency,
+    latitude,
+    longitude,
+    peleng,
+    person_who_added: personsWhoAdded,
+    person_who_edited: personWhoEdited,
+    ship_bort_number: shipBortNumber,
+    ship_callsign: shipCallsign,
+    ship_city: shipCity,
+    ship_name: shipName,
+    ship_project: shipProject,
+    ship_type: shipType
+  }) => ({
+    additionalInformation, companionCallsign, createTimestamp, dataId, discoverTimestamp, editTimestamp, shipId,
+    frequency, latitude, longitude, peleng, personsWhoAdded, personWhoEdited, shipBortNumber, shipCallsign, shipCity,
+    shipName, shipProject, shipType
+  }))
+};
 
 export async function apiFilterShipsData(body) {
   const { data } =  await api.post('/ship/filter', body);
-  return data;
+  return normalizeFilterResponse(data);
 }

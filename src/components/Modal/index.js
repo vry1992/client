@@ -25,7 +25,7 @@ export function Modal({
 }) {
 
     useEffect(() => {
-        app.classList.add(className);
+        show && app.classList.add(className);
         return () => {
             app.classList.remove(className);
         }

@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  searchShipsList: []
+  searchShipsList: [],
+  shipsFilter: []
 }
 
 export const shipsSlice = createSlice({
@@ -11,10 +12,13 @@ export const shipsSlice = createSlice({
     setSearchShipsList: (state, { payload }) => {
       state.searchShipsList = payload;
     },
+    setShipsFilter: (state, { payload }) => {
+      state.shipsFilter = payload;
+    },
   },
 });
 
-export const { setSearchShipsList } = shipsSlice.actions;
+export const { setSearchShipsList, setShipsFilter } = shipsSlice.actions;
 const { reducer: shipsReducer } = shipsSlice;
 
 export {

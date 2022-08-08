@@ -6,6 +6,10 @@ export const getPelengsToDraw = ({ pelengReducer }) => pelengReducer.pelengsToDr
 export const isLoading = (({ loaderReducer }) => Object.keys(loaderReducer.actions).length);
 
 export const getUnitNames = (({ initialDataReducer }) => initialDataReducer.unitNames);
+export const getShipNamesOptions = (({ initialDataReducer: { shipNames } }) => shipNames);
+export const getCallSignsOptions = (({ initialDataReducer: { callSigns } }) => callSigns);
+export const getPersonsWhoAddedOptions = (({ initialDataReducer: { personsWhoAdded } }) => personsWhoAdded);
 export const getSearchShipsList = (({ shipsReducer }) => shipsReducer.searchShipsList);
+export const getFilterShipData = (({ shipsReducer }) => shipsReducer.shipsFilter);
 
 export const getFlowSidebarContentType = ({ flowSidebarReducer }) => flowSidebarReducer.contentType;

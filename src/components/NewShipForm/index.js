@@ -31,6 +31,15 @@ export function NewShipForm() {
         dispatch(postShip(values));
     }
 
+    function getOptions(name, props) {
+        if (name === newShipFormConfig.shipUnit.fieldName) {
+            return unitNames.map(({ unitId, unitName }) => ({ key: unitId, label: unitName }));
+        }
+        else if (name === newShipFormConfig.shipType.fieldName) {
+            return props.options;
+        }
+    }
+
     useEffect(() => {
         checkIsFormValid(errors, values);
     }, [values, errors])
@@ -38,18 +47,17 @@ export function NewShipForm() {
     const renderForm = () => {
         return (
             Object.entries(newShipFormConfig)
-                .map(([ name, { options, ...restProps } ]) => {
-                    const opts = name === newShipFormConfig.shipUnit.fieldName ? unitNames : options;
+                .map(([ name, props ]) => {
                     return (
                         <FormField 
+                            {...props} 
                             key={name}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             value={values[name]}
                             error={errors[name]} 
                             touched={touched[name]}
-                            options={opts}
-                            {...restProps} 
+                            options={getOptions(name, props)}
                         />
                     );
                 })

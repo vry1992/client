@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FloatingLabel } from 'react-bootstrap';
+import { MultySelectField } from './MultySelectField';
 import Form from 'react-bootstrap/Form';
 import './index.scss';
 
@@ -39,9 +40,7 @@ export function FormField(fieldProps) {
     </Form.FloatingLabel>
   );
 
-  console.log(options)
-
-  const renderSelectField = () => (
+  const renderMonoSelectField = () => (
     <Form.FloatingLabel
       label={`${label} ${ required ? '*' : '' }`}
       className='mb-3'>
@@ -56,8 +55,8 @@ export function FormField(fieldProps) {
           isInvalid={!!error && touched}
         >
           <option>Оберіть один із варіантів</option>
-          {Object.keys(options).length && Object.entries(options).map(([ value, label ]) => {
-            return <option key={value} value={value}>{label}</option>
+          {options.map(({ key, label }) => {
+            return <option key={key} value={key}>{label}</option>
           })}
         </Form.Select>
       { error && touched && (<Form.Control.Feedback type='invalid'>{ error }</Form.Control.Feedback>)}
@@ -85,12 +84,12 @@ export function FormField(fieldProps) {
     return (
       <Form.Group className='mb-3'>
         <Form.Check 
-        onChange={onChange} 
-        name={fieldName}
-        id={fieldName}
-        onBlur={onBlur}
-        label={label}
-         />
+          onChange={onChange} 
+          name={fieldName}
+          id={fieldName}
+          onBlur={onBlur}
+          label={label}
+        />
       </Form.Group>
     )
   };
@@ -139,7 +138,8 @@ export function FormField(fieldProps) {
       <React.Fragment key={fieldName}>
           { (type === 'text' || type === 'number') && renderTextField() }
           { type === 'color' && renderColorField() }
-          { type === 'select' && renderSelectField() }
+          { type === 'select' && !restProps.multiple && renderMonoSelectField() }
+          { type === 'select' && restProps.multiple && <MultySelectField {...fieldProps} /> }
           { type === 'checkbox' && renderCheckboxField() }
           { type === 'time' && renderTimeField() }
           { type === 'date' && renderDateField() }
