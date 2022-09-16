@@ -5,14 +5,16 @@ import { SearchForm } from '../../components/SearchForm';
 import Table from 'react-bootstrap/Table';
 import { getFilterShipData } from '../../selectors';
 import { useSelector } from 'react-redux';
+import './index.scss';
+import { parseDate } from '../../helpers';
+import { CustomTooltip } from '../../components/CustomTooltip';
+import { CustomButton } from '../../components/CustomButton';
+import { shipTypes } from '../../constants';
+import { useNavigate } from 'react-router-dom';
+import { routesConfig } from '../../routing';
 
 export function Search() {
-
-    // data_id: dataId,
-    // edit_timestamp: editTimestamp,
-    // fk_ship_data_id: shipId,
-    // person_who_edited: personWhoEdited,
-
+    const navigate = useNavigate()
     const filterTableConfig = {
         topLine: {
             shipName: {
@@ -20,6 +22,9 @@ export function Search() {
             },
             shipType: {
                 text: 'Тип'
+            },
+            shipProject: {
+                text: 'Проєкт'
             },
             shipCity: {
                 text: 'Місто дислокації'
@@ -67,6 +72,14 @@ export function Search() {
 
     const filterShipsData = useSelector(getFilterShipData);
 
+    const onEditClick = ({ dataId }) => {
+        console.log(dataId)
+    }
+
+    const onDeleteClick = ({ dataId }) => {
+        console.log(dataId)
+    }
+
     const renderTableBody = useCallback(() => {
         return (
             filterShipsData.map((row, index) => {
@@ -74,7 +87,26 @@ export function Search() {
                     <React.Fragment key={index}>
                         <tr>
                             {Object.keys(filterTableConfig.topLine).map((col, idx) => (
-                                <td rowSpan={idx === 0 ? 4 : 1} key={`${col}_${index}`}>{row[col]}</td>
+                                <td rowSpan={idx === 0 ? 4 : 1} key={`${col}_${index}`}>
+                                    <CustomTooltip text={filterTableConfig.topLine[col].text}>
+                                        <span>{col === 'shipType' ? shipTypes[row[col]].name : row[col]}</span>
+                                    </CustomTooltip>
+                                    {idx === 0 ? (
+                                        <div>
+                                            <CustomButton 
+                                                onClick={() => onEditClick(row)}
+                                                iconPath={`${process.env.PUBLIC_URL}/images/icons/pencil.png`} 
+                                                size='sm'
+                                            />
+                                            <br/>
+                                            <CustomButton 
+                                                onClick={() => onDeleteClick(row)}
+                                                iconPath={`${process.env.PUBLIC_URL}/images/icons/delete.png`} 
+                                                size='sm' 
+                                            />
+                                        </div>
+                                    ) : null}
+                                </td>
                             ))}
                         </tr>
                         <tr>
@@ -88,15 +120,17 @@ export function Search() {
                             { Object.entries(filterTableConfig.thirdLine).map(([key, { text }]) => (
                                 <td colSpan={Object.keys(filterTableConfig.topLine).length / Object.keys(filterTableConfig.thirdLine).length} 
                                     key={`${key}_${index}`}>
-                                        {text} <i>{row[key]}</i>
+                                        {text} <i>{key === 'createTimestamp' ? parseDate(Number(row[key])) : row[key] }</i>
                                 </td>
                             )) }
                         </tr>
-                        <tr>
+                        <tr className='bottom-row'>
                             { Object.entries(filterTableConfig.fourthLine).map(([key, { text }]) => (
                                 <td colSpan={Object.keys(filterTableConfig.topLine).length / Object.keys(filterTableConfig.fourthLine).length} 
                                     key={`${key}_${index}`}>
-                                        {text} {row[key] ? <i>{row[key]}</i> : <i>не редагувалось</i>}
+                                        {text} {row[key] ? (
+                                            <i>{key === 'editTimestamp' ? parseDate(row[key]) : row[key]}</i>
+                                        ) : <i>не редагувалось</i>}
                                 </td>
                             )) }
                         </tr>
@@ -107,17 +141,21 @@ export function Search() {
         )
     }, [filterShipsData])
 
+    const onShowOnMapClick = () => {
+        navigate(routesConfig.map.path, { state: filterShipsData })
+    }
+
     return (
         <div className='search'>
             <Headline text='Пошук' />
             <SearchForm />
-
+            { filterShipsData.length && <CustomButton text='Відобразити на карті' onClick={onShowOnMapClick}/> }
             <Table responsive>
                 <thead>
                     <tr>
                         {
                             Object.entries(filterTableConfig.topLine).map(([key, { text }]) => {
-                                return <th key={key}>{text}</th>
+                                return <th className='ships-table-head' key={key}>{text}</th>
                             })
                         }
                     </tr>

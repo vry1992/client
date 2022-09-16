@@ -21,6 +21,7 @@ export function InteractiveMap({
     polygons = [],
     initialPos = defaultInitialPos,
     bounds = defaultBounds,
+    data,
     handleClick
 }) {
 
@@ -28,45 +29,7 @@ export function InteractiveMap({
     const pelengsAmount = useSelector(getPelengsAmount);
     const pelengsToDraw = useSelector(getPelengsToDraw);
     const dispatch = useDispatch();
-
-    const mockShips = [
-        {
-            lat: 44.037433155080215,
-            lng: 34.453125,
-            url: ship,
-            isShip: true
-        },
-        {
-            lat: 42.037433155080215,
-            lng: 34.453125,
-            url: ship,
-            isShip: true
-        },
-        {
-            lat: 45.037433155080215,
-            lng: 34.453125,
-            url: ship,
-            isShip: true
-        },
-        {
-            lat: 41.037433155080215,
-            lng: 34.453125,
-            url: ship,
-            isShip: true
-        },
-        {
-            lat: 46.037433155080215,
-            lng: 34.453125,
-            url: ship,
-            isShip: true
-        },
-        {
-            lat: 46.461215,
-            lng: 30.715911,
-            url: ship,
-            isShip: true
-        }
-    ]
+    const [zoom, setZoom] = useState(1);
 
     const [viewer, setViewer] = useState(null);
 
@@ -78,7 +41,12 @@ export function InteractiveMap({
         );
     };
 
-    const preventMaxZoomOut = ({ a }) => a < 1 && setMapToCenter();
+    const preventMaxZoomOut = (zoomValue) => zoomValue < 1 && setMapToCenter();
+
+    const onZoom = ({ a: zoomValue }) => {
+        preventMaxZoomOut(zoomValue)
+        setZoom(zoomValue);
+    }
 
     useEffect(() => {
         viewer && setMapToCenter();
@@ -100,18 +68,20 @@ export function InteractiveMap({
     }
 
     const im = () => {
-        return mockShips.map((ship) => {
+        console.log(data)
+        return data.map((dataItem) => {
+            if (!dataItem.latitude || !dataItem.longitude) return null
             return {
-                url: ship.url, 
-                lat: latToPixels(ship.lat, height, bounds) - mapIconSize.width / 2,
-                lng: lngToPixels(ship.lng, width, bounds) - mapIconSize.height / 2,
-                isShip: ship.isShip,
+                url: ship, 
+                lat: latToPixels(dataItem.latitude, height, bounds),
+                lng: lngToPixels(dataItem.longitude, width, bounds),
+                isShip: true,
                 width: mapIconSize.width,
-                height: mapIconSize.height
+                height: mapIconSize.height,
+                ...dataItem
             }
-        })
+        }).filter(Boolean)
     }
-
     return (
         <div className='map-wpapper'>
             <ReactSVGPanZoom
@@ -119,7 +89,7 @@ export function InteractiveMap({
                 onClick={evt => clicked(evt)}
                 detectAutoPan={false}
                 ref={Viewer => setViewer(Viewer)}
-                onZoom={preventMaxZoomOut}>
+                onZoom={onZoom}>
                 <svg width={width} height={height}>
                     <g>
                         <Images images={[{'url': world2, 'topLat': 90, 'topLng': -180, 'bottomLat': -90, 'bottomLng': 180}]} width={width} height={height} bounds={bounds}  />
@@ -128,6 +98,7 @@ export function InteractiveMap({
                             width={20} 
                             height={20} 
                             bounds={bounds} 
+                            zoom={zoom}
                         />
                         {
                             pelengsToDraw.map((peleng, index) => (

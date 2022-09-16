@@ -13,3 +13,4 @@ export const getSearchShipsList = (({ shipsReducer }) => shipsReducer.searchShip
 export const getFilterShipData = (({ shipsReducer }) => shipsReducer.shipsFilter);
 
 export const getFlowSidebarContentType = ({ flowSidebarReducer }) => flowSidebarReducer.contentType;
+export const getShipsFilterValues = ({ shipsFilterReducer }) => shipsFilterReducer.filter

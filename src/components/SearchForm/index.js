@@ -9,7 +9,7 @@ import { CustomButton } from '../CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterShips } from '../../actions/ships';
 import { getDefaultDateFrom, getDefaultDateTo, getSelectOptionsFromArray } from '../../helpers';
-import { getShipNamesOptions, getCallSignsOptions, getPersonsWhoAddedOptions } from '../../selectors';
+import { getShipNamesOptions, getCallSignsOptions, getPersonsWhoAddedOptions, getShipsFilterValues } from '../../selectors';
 
 const initialValues = Object.fromEntries(Object.keys(searchFormFields).map((item) => [item, '']));
 
@@ -19,6 +19,8 @@ export function SearchForm() {
     const shipNamesOptions = useSelector(getShipNamesOptions);
     const callSignsOptions = useSelector(getCallSignsOptions);
     const personsWhoAddedOptions = useSelector(getPersonsWhoAddedOptions);
+    const aaa = useSelector(getShipsFilterValues)
+    console.log(aaa)
     const [dateFrom, setDateFrom] = useState(getDefaultDateFrom());
     const [timeFrom, setTimeFrom] = useState(null);
     const [dateTo, setDateTo] = useState(getDefaultDateTo());
@@ -26,7 +28,7 @@ export function SearchForm() {
     const dispatch = useDispatch();
 
     const { values, handleSubmit, handleBlur, handleChange, touched, errors, setFieldValue } = useFormik({
-        initialValues,
+        initialValues: Object.fromEntries(Object.keys(searchFormFields).map((item) => [item, aaa[item] || ''])),
         validationSchema,
         onSubmit
     });

@@ -8,11 +8,12 @@ export function CustomButton({
   disabled,
   onClick,
   iconPath,
-  type = 'button'
+  type = 'button',
+  size = 'lg'
 }) {
 
   return (
-    <Button className='custom-button' variant={variant} onClick={onClick} disabled={disabled} type={type}>
+    <Button className='custom-button' variant={variant} onClick={onClick} disabled={disabled} type={type} size={size}>
       { text }
       { iconPath && <img src={iconPath} alt={text}/> }
     </Button>

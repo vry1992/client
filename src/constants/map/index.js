@@ -1,7 +1,7 @@
 export const defaultInitialPos = { 
-  lat: 0, 
-  lng: 0,
-  zoom: 1 
+  lat: 0, // ^
+  lng: 0, // <>
+  zoom: 1
 };
 
 export const defaultBounds = {
@@ -12,6 +12,6 @@ export const defaultBounds = {
 };
 
 export const mapIconSize = {
-  width: 2,
-  height: 2
+  width: 1,
+  height: 1
 };
